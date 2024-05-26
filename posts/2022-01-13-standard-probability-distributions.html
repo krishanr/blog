@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.4.554">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2022-01-13">
+<meta name="description" content="An expository article on the elementary probability distributions, their properties, and common applications, with calculations done in scipy.">
+
+<title>Krishan Rajaratnam’s blog - Standard probability distributions</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+/* CSS for citations */
+div.csl-bib-body { }
+div.csl-entry {
+  clear: both;
+  margin-bottom: 0em;
+}
+.hanging-indent div.csl-entry {
+  margin-left:2em;
+  text-indent:-2em;
+}
+div.csl-left-margin {
+  min-width:2em;
+  float:left;
+}
+div.csl-right-inline {
+  margin-left:2em;
+  padding-left:1em;
+}
+div.csl-indent {
+  margin-left: 2em;
+}</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../favicon.svg" rel="icon" type="image/svg+xml">
+<script src="../site_libs/quarto-html/quarto.js"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-text-placeholder": "",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit",
+    "search-label": "Search"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../styles.css">
+</head>
+
+<body class="nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top quarto-banner">
+    <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container mx-auto">
+    <a class="navbar-brand" href="../index.html">
+    <span class="navbar-title">Krishan Rajaratnam’s blog</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../about.html"> 
+<span class="menu-text">About</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/krishanr"> <i class="bi bi-github" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://x.com/KrishanRajarat1"> <i class="bi bi-twitter" role="img">
+</i> 
+<span class="menu-text"></span></a>
+  </li>  
+</ul>
+          </div> <!-- /navcollapse -->
+          <div class="quarto-navbar-tools">
+</div>
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Standard probability distributions</h1>
+                  <div>
+        <div class="description">
+          An expository article on the elementary probability distributions, their properties, and common applications, with calculations done in scipy.
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">statistics</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">January 13, 2022</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#bernoulli-distribution" id="toc-bernoulli-distribution" class="nav-link active" data-scroll-target="#bernoulli-distribution">Bernoulli distribution</a></li>
+  <li><a href="#binomial-distribution" id="toc-binomial-distribution" class="nav-link" data-scroll-target="#binomial-distribution">Binomial distribution</a></li>
+  <li><a href="#geometric-distribution" id="toc-geometric-distribution" class="nav-link" data-scroll-target="#geometric-distribution">Geometric distribution</a></li>
+  <li><a href="#negative-binomial-distribution" id="toc-negative-binomial-distribution" class="nav-link" data-scroll-target="#negative-binomial-distribution">Negative Binomial distribution</a></li>
+  <li><a href="#poisson-distribution-and-processes" id="toc-poisson-distribution-and-processes" class="nav-link" data-scroll-target="#poisson-distribution-and-processes">Poisson distribution and processes</a></li>
+  <li><a href="#gamma-function-and-distribution" id="toc-gamma-function-and-distribution" class="nav-link" data-scroll-target="#gamma-function-and-distribution">Gamma function and distribution</a></li>
+  <li><a href="#exponential-distribution" id="toc-exponential-distribution" class="nav-link" data-scroll-target="#exponential-distribution">Exponential distribution</a></li>
+  <li><a href="#characteristic-functions-of-random-variables" id="toc-characteristic-functions-of-random-variables" class="nav-link" data-scroll-target="#characteristic-functions-of-random-variables">Characteristic functions of random variables</a></li>
+  <li><a href="#examples-of-characteristic-functions" id="toc-examples-of-characteristic-functions" class="nav-link" data-scroll-target="#examples-of-characteristic-functions">Examples of characteristic functions</a></li>
+  <li><a href="#normal-distribution-weak-law-of-large-numbers-and-the-central-limit-theorem" id="toc-normal-distribution-weak-law-of-large-numbers-and-the-central-limit-theorem" class="nav-link" data-scroll-target="#normal-distribution-weak-law-of-large-numbers-and-the-central-limit-theorem">Normal distribution, weak law of large numbers, and the central limit theorem</a></li>
+  </ul>
+<div class="quarto-alternate-formats"><h2>Other Formats</h2><ul><li><a href="2022-01-13-standard-probability-distributions.out.ipynb" download="2022-01-13-standard-probability-distributions.out.ipynb"><i class="bi bi-journal-code"></i>Jupyter</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+
+<p>We’ll review elementary univariate probability distributions in statistics, including how the mean/variance are derived, simple relationships, and the questions they answer, with calculations done in scipy.</p>
+<p>This review is similar in spirit to <a href="https://www.stat.umn.edu/geyer/5101/notes/brand.pdf">brand name distributions</a> and <a href="http://www.math.wm.edu/~leemis/2008amstat.pdf">univariate distribution relationships</a>.</p>
+<div id="d18805b1" class="cell" data-execution_count="2">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.special <span class="im">as</span> sp</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.stats <span class="im">as</span> ss</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The univariate probability distributions answer questions about events occuring on a discrete time interval <span class="math inline">\(D_n = [0, 1, \dotsc, n ]\)</span> or a continuous time interval <span class="math inline">\(I_t = [0, t]\)</span>.</p>
+<p>In the discrete case each event could be a success with probability <span class="math inline">\(p\)</span> or a failure with probability <span class="math inline">\(1-p\)</span>, with different events being independent. Then we can ask the following questions:</p>
+<ol type="1">
+<li>For fixed <span class="math inline">\(n\)</span>, what is the probability of observing <span class="math inline">\(k\)</span> successes?</li>
+<li>How many events do we have to observe before seeing <span class="math inline">\(1\)</span> success or more generally, <span class="math inline">\(r\)</span> successes?</li>
+</ol>
+<p>The first question is answered by the Binomial distribution, and the second is answered by the geometric and negative binomial distributions. A concrete example of such events are coin tosses, where the outcome of each toss is independent of previous tosses, and each toss comes up as heads with probability <span class="math inline">\(p = \frac{1}{2}\)</span>.</p>
+<p>In the case of a continuous time interval <span class="math inline">\(I_t\)</span> there are many types of events that can occur, but we’ll study the simplest type with real world applications, the events associated with a Poisson process. Then we can ask the following questions about a Poisson process:</p>
+<ol type="1">
+<li>Within a fixed time <span class="math inline">\(t\)</span>, what is the probability of observing <span class="math inline">\(k\)</span> events?</li>
+<li>How much time do we have to wait before seeing the first event or more generally, <span class="math inline">\(r\)</span> events?</li>
+</ol>
+<p>The first question is answered by the Poisson distribution, and the second is answered by the exponential and Erlang (Gamma) distributions. A concrete example of events following a Poisson process are the distribution of earthquakes in a given region.</p>
+<p>Finally, the normal distribution will arise as the limiting distribution in the famous central limit theorem.</p>
+<p>Moving forward, do remember that</p>
+<p><span class="math display">\[ \operatorname{var}[X] = \mathbb{E}[(X - \mathbb{E}[X] )^2] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \]</span></p>
+<section id="bernoulli-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="bernoulli-distribution">Bernoulli distribution</h3>
+<p>Suppose X is a random variable denoting having a trial with a probability of success <span class="math inline">\(p\)</span>. It gives a success, <span class="math inline">\(X = 1\)</span>, with probability <span class="math inline">\(p\)</span> and failure, <span class="math inline">\(X = 0\)</span>, with probability <span class="math inline">\(1-p\)</span>. Then <span class="math inline">\(X \sim \operatorname{Ber}(p)\)</span>, and</p>
+<p><span class="math display">\[\mathbb{E}[X] = p,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = p (1-p)\]</span></p>
+<div id="b01d9653" class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.bernoulli(p)</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">'mvsk'</span>)</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean 0.4, var 0.24, skew 0.40824829046386296, kurt -1.8333333333333337</code></pre>
+</div>
+</div>
+<div id="a0cd0cbf" class="cell" data-execution_count="7">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rv.interval(<span class="fl">0.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="7">
+<pre><code>(0.0, 1.0)</code></pre>
+</div>
+</div>
+<div id="910b3450" class="cell" data-scrolled="true" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, p, size<span class="op">=</span><span class="dv">100</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Bernoulli Distribution'</span>, xlabel<span class="op">=</span><span class="st">'y'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-5-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>P(X = 1) is calculated using the probability mass function below:</p>
+<div id="4c43cb3f" class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rv.pmf(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="9">
+<pre><code>0.4</code></pre>
+</div>
+</div>
+</section>
+<section id="binomial-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="binomial-distribution">Binomial distribution</h3>
+<p>When we have <span class="math inline">\(n\)</span> independent trials, each with a probability of success <span class="math inline">\(p\)</span> and failure <span class="math inline">\(1-p\)</span>, then <span class="math inline">\(X \sim \operatorname{Bin}(n, p)\)</span> which is a sum of <span class="math inline">\(n\)</span> independent <span class="math inline">\(\operatorname{Ber}(p)\)</span> random variables. I.e. letting <span class="math inline">\(X_i \sim \operatorname{Ber}(p)\)</span> for <span class="math inline">\(i = 1, \dotsc, n\)</span>, then</p>
+<p><span class="math display">\[ X = \sum_{i=1}^n X_i \]</span></p>
+<p>and a straightforward calculation gives</p>
+<p><span class="math display">\[\mathbb{E}[X] = n p,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = n p (1-p)\]</span></p>
+<div id="a4eab605" class="cell" data-execution_count="124">
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p, n <span class="op">=</span> <span class="fl">0.4</span>, <span class="dv">10</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.binom(n, p)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean 4.0, var 2.4, skew 0.12909944487358052, kurt -0.1833333333333334</code></pre>
+</div>
+</div>
+<div id="80d9d4e3" class="cell" data-execution_count="125">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.binomial(n, p, size<span class="op">=</span><span class="dv">200</span>)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Binomial distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-8-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>P(X = 3) is calculated using the probability mass function below:</p>
+<div id="fa1526e7" class="cell" data-execution_count="117">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rv.pmf(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="117">
+<pre><code>0.21499084799999976</code></pre>
+</div>
+</div>
+<p>Do a quick check that the probability mass function is normalized:</p>
+<div id="6d0f2926" class="cell" data-execution_count="129">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">sum</span> (rv.pmf(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n<span class="op">+</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="129">
+<pre><code>0.9999999999999994</code></pre>
+</div>
+</div>
+</section>
+<section id="geometric-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="geometric-distribution">Geometric distribution</h3>
+<p>Suppose independent trials, each with a probability of success <span class="math inline">\(p\)</span>, are performed until success occurs. Then the number of trials until the first success occurs is a random variable <span class="math inline">\(X \sim \operatorname{Geo}(p)\)</span>, and called a geometric random variable. Its probability mass function is:</p>
+<p><span class="math display">\[ P(X= n) = (1-p)^{n-1} p, \: \: n= 1,2,\dotsc \]</span></p>
+<p>Using the probability generating function we calculate:</p>
+<p><span class="math display">\[\mathbb{E}[X] = \frac{1}{p},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \frac{1-p}{p^2}\]</span></p>
+<div id="c25e0bf2" class="cell" data-execution_count="132">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.geom(p)</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean 2.5, var 3.749999999999999, skew 2.0655911179772892, kurt 6.2666666666666675</code></pre>
+</div>
+</div>
+<div id="fdc1b166" class="cell" data-execution_count="139">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.geometric(p, size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label <span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Geometric Distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-12-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>As the above histogram hints at, the geometric distribution is the discretization of the exponential distribution, and shares the memoryless property:</p>
+<p><span class="math display">\[ P(X &gt; n + k | X &gt; k) = P(X &gt; n) \]</span></p>
+</section>
+<section id="negative-binomial-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="negative-binomial-distribution">Negative Binomial distribution</h3>
+<p>Suppose independent trials, each with a probability of success <span class="math inline">\(p\)</span>, are performed until success occurs (with the last trial being a success). Then the number of trials until <span class="math inline">\(r\)</span> successes occur is a random variable <span class="math inline">\(X \sim \operatorname{NegBin}(r,p)\)</span> and called a negative binomial random variable, which can be expressed as a sum of <span class="math inline">\(r\)</span> independent geometric distributions <span class="math inline">\(X_i \sim \operatorname{Geo}(p)\)</span> for <span class="math inline">\(i = 1, \dotsc, n\)</span>.</p>
+<p><span class="math display">\[ X = X_1 + X_2 + \dotsc + X_n \]</span></p>
+<p>The probability mass function is:</p>
+<p><span class="math display">\[ P(X = k) = { k + r - 1 \choose k} p^r (1-p)^{k} \]</span></p>
+<p>where <span class="math inline">\(k\)</span> is the number of failures seen before seeing a total of <span class="math inline">\(r\)</span> successes.</p>
+<p><span class="math display">\[\mathbb{E}[X] = \frac{r (1-p)}{p},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = r\frac{(1-p)}{p^2}\]</span></p>
+<div id="6e634023" class="cell" data-execution_count="167">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.nbinom(r, p)</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean 5.999999999999999, var 14.999999999999996, skew 1.0327955589886446, kurt 1.5666666666666669</code></pre>
+</div>
+</div>
+<div id="5db91051" class="cell" data-scrolled="true" data-execution_count="170">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.negative_binomial(r, p, size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Negative Binomial distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-14-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="poisson-distribution-and-processes" class="level3">
+<h3 class="anchored" data-anchor-id="poisson-distribution-and-processes">Poisson distribution and processes</h3>
+<p>The number of events occuring in a fixed time interval <span class="math inline">\(t\)</span>, with each event occuring independently of each other and at a average constant rate <span class="math inline">\(\lambda\)</span> is described by the Poisson distribution with parameter <span class="math inline">\(\mu = \lambda t\)</span>, <span class="math inline">\(X \sim Poi(\mu)\)</span>, and has the probability mass function:</p>
+<p><span class="math display">\[ P(X = k) = \frac{\mu^k}{k!} e^{-\mu}  \: \: k = 0,1,\dotsc\]</span></p>
+<p>The standard moments are,</p>
+<p><span class="math display">\[\mathbb{E}[X] = \mu = \lambda t,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \mu\]</span></p>
+<p>Note that the time till the first event in a Poisson process is described by the exponential distribution with parameter <span class="math inline">\(\lambda\)</span>, and the time till the first <span class="math inline">\(r\)</span> events in a Poisson process is described by the Erlang (Gamma) distribution with shape <span class="math inline">\(r\)</span> and rate <span class="math inline">\(\lambda\)</span>. See below for definitions.</p>
+<p>Also see section 20.2 from the stats cookbook for a good summary of the Poisson process and the different distributions involved.</p>
+<div id="ec00b252" class="cell" data-execution_count="185">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="dv">6</span></span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.poisson(mu)</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>mean 6.0, var 6.0, skew 0.408248290463863, kurt 0.16666666666666666</code></pre>
+</div>
+</div>
+<div id="31e110a2" class="cell" data-execution_count="189">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.poisson(mu, size<span class="op">=</span><span class="dv">1000</span>)</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Poisson distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-16-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="gamma-function-and-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="gamma-function-and-distribution">Gamma function and distribution</h3>
+<p>Recall the Gamma function, <span class="math inline">\(\Gamma(\alpha)\)</span>, is a function of a real variable, such that <span class="math inline">\(\Gamma(\alpha) = \alpha!\)</span> for <span class="math inline">\(\alpha = 0, 1, 2 \dotsc\)</span>.</p>
+<p>The Gamma distribution then has the probability distribution:</p>
+<p><span class="math display">\[f(x; \alpha, \beta) = \frac{x^{\alpha-1} e^{-\beta x} \beta^\alpha}{\Gamma(\alpha)} \text{ for } x &gt; 0\]</span></p>
+<p>with <span class="math inline">\(\alpha &gt;0\)</span> called the shape and $&gt;0 $ called the rate. <span class="math inline">\(\theta = 1/\beta\)</span> is also called the scale parameter.</p>
+<p>If <span class="math inline">\(X \sim \operatorname{Ga}(\alpha, \beta)\)</span> (see <span class="citation" data-cites="Murphy2012MachineL">(<a href="#ref-Murphy2012MachineL" role="doc-biblioref">Murphy 2012</a>)</span>), then the standard moments are</p>
+<p><span class="math display">\[\mathbb{E}[X] = \frac{\alpha}{\beta},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \frac{\alpha}{\beta^2}\]</span> <span class="math display">\[\operatorname{mode}{X} = \frac{(\alpha-1)}{\beta} \]</span></p>
+<p>We parameterize the Gamma distribution in scipy as follows.</p>
+<div id="8fd0d737" class="cell" data-execution_count="80">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>alpha, beta  <span class="op">=</span> <span class="dv">3</span>, <span class="dv">1</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.gamma(a<span class="op">=</span>alpha,scale<span class="op">=</span><span class="dv">1</span><span class="op">/</span>beta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="71d86356" class="cell" data-scrolled="true" data-execution_count="81">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>rv.interval(<span class="fl">0.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="81">
+<pre><code>(0.33786338872773347, 9.273792089255544)</code></pre>
+</div>
+</div>
+<div id="b731ce05" class="cell" data-execution_count="85">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, rv.ppf(<span class="fl">0.999</span>), <span class="dv">100</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>ax.plot(x, rv.pdf(x), <span class="st">'r-'</span>, lw<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, label<span class="op">=</span><span class="st">'gamma pdf'</span>)</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Gamma PDF"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-19-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="exponential-distribution" class="level3">
+<h3 class="anchored" data-anchor-id="exponential-distribution">Exponential distribution</h3>
+<p>The Exponential, Erlang, and Chi-Squared distributions are all related to the Gamma distribution <span class="citation" data-cites="Murphy2012MachineL">(<a href="#ref-Murphy2012MachineL" role="doc-biblioref">Murphy 2012</a>)</span>, but we’ll describe the simplest, the exponential distribution.</p>
+<p><span class="math display">\[ \operatorname{Exp}(x | \lambda) =  \operatorname{Ga}(x | 1, \lambda)\]</span></p>
+<p>where <span class="math inline">\(\lambda\)</span> is the rate parameter. The exponential distribution describes the waiting time between events in a Poisson process.</p>
+<p>From the above formulas, if <span class="math inline">\(X \sim \operatorname{Exp}(x | \lambda)\)</span>, then</p>
+<p><span class="math display">\[\mathbb{E}[X] = \frac{1}{\lambda},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \frac{1}{\lambda^2}\]</span> <span class="math display">\[\operatorname{mode}{X} = 0 \]</span></p>
+<p>The exponential distribution, which is the continuous analog of the geometric distribution, also has the memoryless property:</p>
+<p><span class="math display">\[ P(X &gt; t + h | X &gt; h) = P(X &gt; t )\]</span></p>
+<p>for any $t, h &gt; 0 $.</p>
+</section>
+<section id="characteristic-functions-of-random-variables" class="level3">
+<h3 class="anchored" data-anchor-id="characteristic-functions-of-random-variables">Characteristic functions of random variables</h3>
+<p>The charactierstic function will be useful for working with these distributions.</p>
+<p>The characteristic function (also called the Fourier transform) of a random variable <span class="math inline">\(X\)</span> is</p>
+<p><span class="math display">\[\phi(t) = \mathbb{E}[e^{i t X}] \: \: \text{ for } t \in \mathbb{R}\]</span></p>
+<p>This function satisfies <span class="math inline">\(|\phi(t)| &lt;= 1\)</span> for all <span class="math inline">\(t\)</span> and is uniformly continuous. It has some advantages over the moment generating function, including the fact that it’s defined everywhere, and that it uniquely determines the random variable <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span>.</p>
+<p>Some other facts that we can derive from characteristic functions:</p>
+<ol type="1">
+<li>If <span class="math inline">\(\phi^k(0)\)</span> and <span class="math inline">\(\mathbb{E}[|X^k|] &lt; \infty\)</span>, then</li>
+</ol>
+<p><span class="math display">\[ \phi^k(0) = i^k \mathbb{E}[X^k] \]</span></p>
+<ol start="2" type="1">
+<li>If <span class="math inline">\(X_1, X_2, \dotsc, X_n\)</span> are independent then</li>
+</ol>
+<p><span class="math display">\[ \phi_{X_1 + \dotsc + X_n}(t) = \phi_{X_1}(t) \dots \phi_{X_n}(t)  \]</span></p>
+<ol start="3" type="1">
+<li>If <span class="math inline">\(a, b \in \mathbb{R}\)</span> and $Y = a X + b $ then</li>
+</ol>
+<p><span class="math display">\[ \phi_{Y}(t) = e^{i t b } \phi_{a X}(t) \]</span></p>
+<ol start="4" type="1">
+<li>For random variables <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span>, define the join characteristic function of <span class="math inline">\(X\)</span>, and <span class="math inline">\(Y\)</span> by <span class="math inline">\(\phi_{X, Y}(s,t) = \mathbb{E}[e^{i s X} e^{i t Y}]\)</span>. Then <span class="math inline">\(X\)</span> and <span class="math inline">\(Y\)</span> are independent iff</li>
+</ol>
+<p><span class="math display">\[ \phi_{X, Y}(s,t) = \phi_X(s) \phi_Y(t) \text{ for all } s, t \in \mathbb{R} \]</span></p>
+<p>See chapter 5 of <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span> for the statement and proof of the above facts.</p>
+</section>
+<section id="examples-of-characteristic-functions" class="level3">
+<h3 class="anchored" data-anchor-id="examples-of-characteristic-functions">Examples of characteristic functions</h3>
+<p>If <span class="math inline">\(X \sim \operatorname{Ber}(p)\)</span> then</p>
+<p><span class="math display">\[ \phi(t) = 1 - p + p e^{i t} \]</span></p>
+<p>If <span class="math inline">\(X \sim \operatorname{Bin}(n,p)\)</span> then</p>
+<p><span class="math display">\[ \phi(t) = (1 - p + p e^{i t} )^n \]</span></p>
+<p>If <span class="math inline">\(X \sim \operatorname{NegBin}(r,p)\)</span> then</p>
+<p><span class="math display">\[ \phi(t) = \left (\frac{p}{1 - e^{it} + p e^{i t}} \right )^r \]</span></p>
+<p>If <span class="math inline">\(X \sim \operatorname{Gam}(\alpha, \beta)\)</span> then</p>
+<p><span class="math display">\[ \phi(t) = \left (\frac{\beta}{\beta - i t} \right )^\alpha \]</span></p>
+<p>If <span class="math inline">\(X \sim \operatorname{Exp}(\lambda)\)</span> then</p>
+<p><span class="math display">\[ \phi(t) = \frac{\lambda}{\lambda - i t}  \]</span></p>
+<p>If <span class="math inline">\(X \sim \operatorname{Poi}(\mu)\)</span> then</p>
+<p><span class="math display">\[ \phi(t)  = e^{\mu ( e^{i t} - 1)}\]</span></p>
+<p>If <span class="math inline">\(X \sim \operatorname{N}(\mu, \sigma)\)</span> then</p>
+<p><span class="math display">\[ \phi(t) = \exp( i \mu t - \frac{\sigma t^2}{2}) \]</span></p>
+<p>If <span class="math inline">\(X \sim U(a, b)\)</span> (continuous Uniform random variable) then</p>
+<p><span class="math display">\[ \phi(t) = \frac{e^{i t b} - e^{i t a}}{ i t (b - a)} \]</span></p>
+<p>See section 5.8 in <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span> for more details. Those functions, plus the above facts about characteristic functions, and the following</p>
+<p><span class="math display">\[ \operatorname{var}[X] = \mathbb{E}[X^2] - (\mathbb{E}[X])^2 \]</span></p>
+<p>can be used to calculate <span class="math inline">\(\mathbb{E}[X]\)</span> and <span class="math inline">\(\operatorname{var}[X]\)</span>.</p>
+<p>The above formulas also clearly show which distributions are closed under taking sums of independent copies.</p>
+</section>
+<section id="normal-distribution-weak-law-of-large-numbers-and-the-central-limit-theorem" class="level3">
+<h3 class="anchored" data-anchor-id="normal-distribution-weak-law-of-large-numbers-and-the-central-limit-theorem">Normal distribution, weak law of large numbers, and the central limit theorem</h3>
+<p>We’ll now study the normal distribution as the error distribution in the central limit theorem.</p>
+<p>First recall that the normal distribution has the probability distribution:</p>
+<p><span class="math display">\[ f(x) = \frac{1}{\sigma \sqrt{2 \pi} } e^{- \frac{1}{2} \left (\frac{x-\mu}{\sigma} \right)^2}\]</span></p>
+<p>where <span class="math inline">\(\mu \in \mathbb{R}\)</span> and <span class="math inline">\(\sigma &gt; 0\)</span>, and the standard moments are</p>
+<p><span class="math display">\[\mathbb{E}[X] = \mu,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \sigma\]</span> <span class="math display">\[\operatorname{mode}{X} = \mu \]</span></p>
+<p>Now consider a sequence <span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span>, … of independent and identically distributed random variables each with mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\sigma\)</span> (good examples being the Bernoulli and Exponential distributions). Let <span class="math inline">\(S_n = X_1 + X_2 + \dots + X_n\)</span> be their partial sums, then the <em>weak law of large numbers</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> says that <span class="math inline">\(\frac{S_n}{n}\)</span> converges to <span class="math inline">\(\mu\)</span> in distribution as <span class="math inline">\(n\)</span> approaches <span class="math inline">\(\infty\)</span> (see section 5.10 in <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span>). We’ll illustrate this theorem by way of example below.</p>
+<div id="9cdd9b9d" class="cell" data-execution_count="83">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>lam <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> draw(n):</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.random.exponential(mu, size<span class="op">=</span>n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Below we’ll plot the distribution of <span class="math inline">\(\frac{S_n}{n}\)</span> for <span class="math inline">\(n = 1, 100\)</span> and <span class="math inline">\(1000\)</span> to see the weak law in action.</p>
+<div id="daf53222" class="cell" data-execution_count="84">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ <span class="bu">sum</span>(draw(n))<span class="op">/</span>n <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">221</span>)</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="st">"Distribution of a random variable"</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ <span class="bu">sum</span>(draw(n))<span class="op">/</span>n <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">222</span>)</span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="ss">f"Average of </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> IID random variables"</span>)</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ <span class="bu">sum</span>(draw(n))<span class="op">/</span>n <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">223</span>)</span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
+<span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="ss">f"Average of </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> IID random variables"</span>)</span>
+<span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'Illustration of the Weak Law of Large Numbers'</span>)</span>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-21-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It clearly looks like the errors in <span class="math inline">\(\frac{S_n}{n} - \mu\)</span> are approaching a normal distribution, in fact <span class="math inline">\((S_n - n \mu)/ \sqrt{n \sigma^2}\)</span> approaches <span class="math inline">\(N(0,1)\)</span> in distribution as <span class="math inline">\(n\)</span> approaches <span class="math inline">\(\infty\)</span> (provided the <span class="math inline">\(X_i\)</span>s has finite non-zero variance, <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span>). This fact is the famous <em>central limit theorem</em>, which we’ll illustrate below.</p>
+<div id="7b952766" class="cell" data-execution_count="79">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ <span class="bu">sum</span>(draw(n))<span class="op">/</span>n <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">221</span>)</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="st">"Distribution of a random variable"</span>)</span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">100</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ (<span class="bu">sum</span>(draw(n)) <span class="op">-</span> mu <span class="op">*</span> n)<span class="op">/</span>np.sqrt(n) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">222</span>)</span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="ss">f"Errors of </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> IID random variables"</span>)</span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-15"><a href="#cb31-15" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1000</span></span>
+<span id="cb31-16"><a href="#cb31-16" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ (<span class="bu">sum</span>(draw(n)) <span class="op">-</span> mu <span class="op">*</span> n)<span class="op">/</span>np.sqrt(n) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
+<span id="cb31-17"><a href="#cb31-17" aria-hidden="true" tabindex="-1"></a>ax <span class="op">=</span> fig.add_subplot(<span class="dv">223</span>)</span>
+<span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
+<span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="ss">f"Errors of </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> IID random variables"</span>)</span>
+<span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'Illustration of the Central Limit Theorem'</span>)</span>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="2022-01-13-standard-probability-distributions_files/figure-html/cell-22-output-1.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Note that it’s straightforward to check that</p>
+<p><span class="math display">\[ \mathbb{E}[(S_n - n \mu)/ \sqrt{n \sigma^2}] = 0, \: \: \operatorname{var}[(S_n - n \mu)/ \sqrt{n \sigma^2}] = 1\]</span></p>
+<p>for all $ n &gt; 0 $. So the first two moments of <span class="math inline">\((S_n - n \mu)/ \sqrt{n \sigma^2}\)</span> agree with the first two moments of <span class="math inline">\(N(0, 1)\)</span>. The central limit theorem then says that in the limit of large <span class="math inline">\(n\)</span>, all moments of <span class="math inline">\((S_n - n \mu)/ \sqrt{n \sigma^2}\)</span> agree with all moments of <span class="math inline">\(N(0, 1)\)</span>.</p>
+<p>Observe that these theorems naturally apply to the Bernoulli and Exponential distributions in the limit of large <span class="math inline">\(n\)</span>, showing that after setting the mean to zero and scaling by the standard deviation, they both converge to the standard normal distribution.</p>
+<p>Finally, note that the weak law of large numbers, and the central limit theorem can be proven fairly elegantly using charactierstic functions (see <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span>, for example). Also see chapter 15 in <a href="https://www.stat.berkeley.edu/~aditya/resources/AllLectures2018Fall201A.pdf">Introduction to probability at an advanced level</a> for more applications of the central limit theorem.</p>
+<p>More summaries of standard statistics can be found in <a href="http://statistics.zone/">stats cookbook</a>.</p>
+
+
+
+</section>
+
+
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="ref-Grimmett2001ProbabilityAR" class="csl-entry" role="listitem">
+Grimmett, Geoffrey R., and David R. Stirzaker. 2001. <span>“Probability and Random Processes.”</span> In.
+</div>
+<div id="ref-Murphy2012MachineL" class="csl-entry" role="listitem">
+Murphy, Kevin P. 2012. <span>“Machine Learning - a Probabilistic Perspective.”</span> In.
+</div>
+</div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
+
+<ol>
+<li id="fn1"><p>The strong law of large numbers refers to almost everywhere convergence of the random variables.<a href="#fnref1" class="footnote-back" role="doc-backlink">↩︎</a></p></li>
+</ol>
+</section></div></main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+    var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+    var mailtoRegex = new RegExp(/^mailto:/);
+      var filterRegex = new RegExp("https:\/\/krishanr\.github\.io\/quarto_blog\/");
+    var isInternal = (href) => {
+        return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+    }
+    // Inspect non-navigation links and adorn them if external
+ 	var links = window.document.querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool)');
+    for (var i=0; i<links.length; i++) {
+      const link = links[i];
+      if (!isInternal(link.href)) {
+        // undo the damage that might have been done by quarto-nav.js in the case of
+        // links that we want to consider external
+        if (link.dataset.originalHref !== undefined) {
+          link.href = link.dataset.originalHref;
+        }
+      }
+    }
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+    const config = {
+      allowHTML: true,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start',
+    };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      if (note) {
+        return note.innerHTML;
+      } else {
+        return "";
+      }
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id === null || id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
+        return container.innerHTML
+      } else {
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      } else {
+        // See if we can fetch a full url (with no hash to target)
+        // This is a special case and we should probably do some content thinning / targeting
+        fetch(url)
+        .then(res => res.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const htmlDoc = parser.parseFromString(html, "text/html");
+          const note = htmlDoc.querySelector('main.content');
+          if (note !== null) {
+            // This should only happen for chapter cross references
+            // (since there is no id in the URL)
+            // remove the first header
+            if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+              note.children[0].remove();
+            }
+            const html = processXRef(null, note);
+            instance.setContent(html);
+          } 
+        }).finally(() => {
+          instance.enable();
+          instance.show();
+        });
+      }
+    }, function(instance) {
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            div.style.left = 0;
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+
+</body></html>
