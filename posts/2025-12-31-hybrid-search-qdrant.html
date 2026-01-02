@@ -198,7 +198,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="setup" class="level2">
 <h2 class="anchored" data-anchor-id="setup">Setup</h2>
 <p>First let’s load the appropriate libraries and setup a class for dense, sparse and hybrid retrieval.</p>
-<div id="2ad39c73" class="cell" data-execution_count="1">
+<div id="61ce9f8a" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># https://qdrant.github.io/fastembed/examples/Hybrid_Search/</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> json</span>
@@ -227,7 +227,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb1-27"><a href="#cb1-27" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> ranx <span class="im">import</span> Qrels, Run, evaluate</span>
 <span id="cb1-28"><a href="#cb1-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.INFO)</span>
+<span id="cb1-29"><a href="#cb1-29" aria-hidden="true" tabindex="-1"></a>logging.basicConfig(level<span class="op">=</span>logging.ERROR) <span class="co"># Set to INFO for debugging.</span></span>
 <span id="cb1-30"><a href="#cb1-30" aria-hidden="true" tabindex="-1"></a>logger <span class="op">=</span> logging.getLogger(<span class="va">__name__</span>)</span>
 <span id="cb1-31"><a href="#cb1-31" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-32"><a href="#cb1-32" aria-hidden="true" tabindex="-1"></a>fastembed.__version__</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -237,7 +237,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 <p>Below there will be 3 classes for dense, sparse and hybrid retrieval. Dense retrieval will be done using the light weight “BAAI/bge-small-en-v1.5” model, while sparse retrieval will be done using the bm25 model from qdrant. The bm25 model actually has 2 hyperparameters for document length and keyword influence which can’t be changed with the current setup. The hybrid retrieval model will retrieve using the dense and sparse models and then combine the scores from each model using reciprocal rank fusion (RRF). This is the standard technique for combining dense and sparse search results, used in libraries such as LangChain, because of its simplicity and robustness. See <a href="https://qdrant.github.io/fastembed/examples/Hybrid_Search">here</a> for implementation details in numpy and links to the original paper which introduces RRF. More details about hybrid search, and other methods for combining search results such as reranking and Matryoshka embeddings can be found <a href="https://qdrant.tech/articles/hybrid-search/">here</a>.</p>
 <p>The <code>BaseRetriever</code> class also has an <code>evaluate</code> method which calculates “ndcg@5”, “recall@3”, “precision@3”, and “mrr” using the <a href="https://github.com/amenra/ranx">ranx</a> library. NDCG (normalized discounted cumulative gain) is the standard in search engine evaluation which works best with ranked data, such as the ground truth data for recommendation engines. The other metrics are simpler and useful when simpler labels are available.</p>
-<div id="c1307325" class="cell" data-execution_count="2">
+<div id="95f2a84d" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> BaseRetriever:</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""Base class for retrieval systems."""</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -554,7 +554,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-314"><a href="#cb3-314" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> search_results</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Below we load the HotPotQA dataset using HuggingFace, as well as the ground truth search results using <code>ir_datasets</code>.</p>
-<div id="83c807fe" class="cell" data-execution_count="3">
+<div id="3cbb0e51" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> ir_datasets</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>client <span class="op">=</span> QdrantClient(<span class="st">":memory:"</span>)</span>
@@ -571,7 +571,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="evaluation" class="level2">
 <h2 class="anchored" data-anchor-id="evaluation">Evaluation</h2>
 <p>First create a dense retriever instance, and index a subset of the HotPotQA dataset into an in memory instance of Qdrant.</p>
-<div id="e62b3d35" class="cell" data-execution_count="4">
+<div id="61e6d1ad" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>dense_retriever <span class="op">=</span> DenseRetriever(client, <span class="st">"HotPotQA_dense"</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>dense_retriever.create_collection()</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>qrels_subset, processed_data <span class="op">=</span> dense_retriever.index_dataset(</span>
@@ -579,121 +579,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <div class="ansi-escaped-output">
-<pre><span class="ansi-green-fg">2026-01-01 14:16:59.112</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
-
-WARNING:__main__:Query 5a8d7341554299441c6b9fe5 not found in qrels
-
-WARNING:__main__:Query 5a83168855429966c78a6b2e not found in qrels
-
-WARNING:__main__:Query 5ae78ec5554299540e5a5605 not found in qrels
-
-WARNING:__main__:Query 5ac1f7f355429964131be2ae not found in qrels
-
-WARNING:__main__:Query 5a8ae49155429951533613a3 not found in qrels
-
-WARNING:__main__:Query 5ab9121555429919ba4e238a not found in qrels
-
-WARNING:__main__:Query 5ae3cf7e5542990afbd1e1e2 not found in qrels
-
-WARNING:__main__:Query 5a7f8a535542994857a76778 not found in qrels
-
-WARNING:__main__:Query 5a7cbd7c554299452d57b9e6 not found in qrels
-
-WARNING:__main__:Query 5ae42a195542995ad6573d0e not found in qrels
-
-WARNING:__main__:Query 5ae1aed65542997f29b3c0ff not found in qrels
-
-WARNING:__main__:Query 5add180e5542992ae4cec45c not found in qrels
-
-WARNING:__main__:Query 5a7c75a655429935c91b51c4 not found in qrels
-
-WARNING:__main__:Query 5aba6de555429955dce3ee1d not found in qrels
-
-WARNING:__main__:Query 5a72d90d55429901807daf53 not found in qrels
-
-WARNING:__main__:Query 5a764234554299109176e6e6 not found in qrels
-
-WARNING:__main__:Query 5a8a30ad5542992d82986eec not found in qrels
-
-WARNING:__main__:Query 5ab96e8a55429970cfb8eae3 not found in qrels
-
-WARNING:__main__:Query 5ab964ae5542996be20204c0 not found in qrels
-
-WARNING:__main__:Query 5ab488f85542990594ba9c58 not found in qrels
-
-WARNING:__main__:Query 5ab31d43554299233954ff0e not found in qrels
-
-WARNING:__main__:Query 5abae0265542996cc5e49ec3 not found in qrels
-
-WARNING:__main__:Query 5ac2c958554299657fa2905b not found in qrels
-
-WARNING:__main__:Query 5a8906515542993b751ca8f0 not found in qrels
-
-WARNING:__main__:Query 5a727c7f5542994cef4bc2d7 not found in qrels
-
-WARNING:__main__:Query 5adf54605542993a75d264c6 not found in qrels
-
-WARNING:__main__:Query 5a7cd27e55429909bec76827 not found in qrels
-
-WARNING:__main__:Query 5a8a07475542992e4fca84dc not found in qrels
-
-WARNING:__main__:Query 5a734fb35542992359bc32f7 not found in qrels
-
-WARNING:__main__:Query 5ae5e49f55429929b08079f8 not found in qrels
-
-WARNING:__main__:Query 5a7f92f655429969796c1abc not found in qrels
-
-WARNING:__main__:Query 5abfb4015542990832d3a1c9 not found in qrels
-
-WARNING:__main__:Query 5a80a3205542992bc0c4a792 not found in qrels
-
-WARNING:__main__:Query 5a772aae5542994aec3b7203 not found in qrels
-
-WARNING:__main__:Query 5a78e3d2554299029c4b5eca not found in qrels
-
-WARNING:__main__:Query 5add88645542992ae4cec5a3 not found in qrels
-
-WARNING:__main__:Query 5ab9796c554299753720f818 not found in qrels
-
-WARNING:__main__:Query 5aba5a4d5542994dbf0198ed not found in qrels
-
-WARNING:__main__:Query 5ae78e11554299540e5a55ff not found in qrels
-
-WARNING:__main__:Query 5a7148ac5542994082a3e762 not found in qrels
-
-WARNING:__main__:Query 5a7cd463554299683c1c6391 not found in qrels
-
-WARNING:__main__:Query 5a88b55f5542994846c1cec7 not found in qrels
-
-WARNING:__main__:Query 5ac023ee554299012d1db5b8 not found in qrels
-
-WARNING:__main__:Query 5a84b8275542994c784dda19 not found in qrels
-
-WARNING:__main__:Query 5a8ba7d75542996e8ac88991 not found in qrels
-
-WARNING:__main__:Query 5ac123015542992a796dee03 not found in qrels
-
-WARNING:__main__:Query 5ac42235554299204fd21ef9 not found in qrels
-
-WARNING:__main__:Query 5a8a582a5542995153361372 not found in qrels
-
-WARNING:__main__:Query 5ae3546a5542992e3233c380 not found in qrels
-
-WARNING:__main__:Query 5a7e02d55542991319bc941f not found in qrels
-
-WARNING:__main__:Query 5a8503055542997175ce1f62 not found in qrels
-
-WARNING:__main__:Query 5a8bb6305542995e66a474d8 not found in qrels
-
-WARNING:__main__:Query 5a7281c45542997f827839ef not found in qrels
-
-WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
+<pre><span class="ansi-green-fg">2026-01-02 13:11:46.676</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
 </pre>
 </div>
 </div>
 </div>
 <p>Below we run the dense retriver on the <code>processed_data</code> and evaluate the search results using <code>qrels_subset</code> as the ground truth search results. The evaluation method was described earlier and is in the <code>BaseRetriever</code> class.</p>
-<div id="49dd9d7e" class="cell" data-execution_count="5">
+<div id="7964d547" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Dense retriever evaluation scores --------------------"</span>)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> dense_retriever.evaluate(qrels_subset, processed_data)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -703,7 +595,7 @@ WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
 </div>
 </div>
 <p>Now the same calculations are repeated for the sparse retriever.</p>
-<div id="c1d48107" class="cell" data-execution_count="6">
+<div id="dd757c8a" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>sparse_retriever <span class="op">=</span> SparseRetriever(client, <span class="st">"HotPotQA_sparse"</span>)</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>sparse_retriever.create_collection()</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>qrels_subset, processed_data <span class="op">=</span> sparse_retriever.index_dataset(</span>
@@ -711,122 +603,14 @@ WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <div class="ansi-escaped-output">
-<pre><span class="ansi-green-fg">2026-01-01 14:23:26.550</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
+<pre><span class="ansi-green-fg">2026-01-02 13:18:25.579</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
 
-<span class="ansi-green-fg">2026-01-01 14:23:27.442</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
-
-WARNING:__main__:Query 5a8d7341554299441c6b9fe5 not found in qrels
-
-WARNING:__main__:Query 5a83168855429966c78a6b2e not found in qrels
-
-WARNING:__main__:Query 5ae78ec5554299540e5a5605 not found in qrels
-
-WARNING:__main__:Query 5ac1f7f355429964131be2ae not found in qrels
-
-WARNING:__main__:Query 5a8ae49155429951533613a3 not found in qrels
-
-WARNING:__main__:Query 5ab9121555429919ba4e238a not found in qrels
-
-WARNING:__main__:Query 5ae3cf7e5542990afbd1e1e2 not found in qrels
-
-WARNING:__main__:Query 5a7f8a535542994857a76778 not found in qrels
-
-WARNING:__main__:Query 5a7cbd7c554299452d57b9e6 not found in qrels
-
-WARNING:__main__:Query 5ae42a195542995ad6573d0e not found in qrels
-
-WARNING:__main__:Query 5ae1aed65542997f29b3c0ff not found in qrels
-
-WARNING:__main__:Query 5add180e5542992ae4cec45c not found in qrels
-
-WARNING:__main__:Query 5a7c75a655429935c91b51c4 not found in qrels
-
-WARNING:__main__:Query 5aba6de555429955dce3ee1d not found in qrels
-
-WARNING:__main__:Query 5a72d90d55429901807daf53 not found in qrels
-
-WARNING:__main__:Query 5a764234554299109176e6e6 not found in qrels
-
-WARNING:__main__:Query 5a8a30ad5542992d82986eec not found in qrels
-
-WARNING:__main__:Query 5ab96e8a55429970cfb8eae3 not found in qrels
-
-WARNING:__main__:Query 5ab964ae5542996be20204c0 not found in qrels
-
-WARNING:__main__:Query 5ab488f85542990594ba9c58 not found in qrels
-
-WARNING:__main__:Query 5ab31d43554299233954ff0e not found in qrels
-
-WARNING:__main__:Query 5abae0265542996cc5e49ec3 not found in qrels
-
-WARNING:__main__:Query 5ac2c958554299657fa2905b not found in qrels
-
-WARNING:__main__:Query 5a8906515542993b751ca8f0 not found in qrels
-
-WARNING:__main__:Query 5a727c7f5542994cef4bc2d7 not found in qrels
-
-WARNING:__main__:Query 5adf54605542993a75d264c6 not found in qrels
-
-WARNING:__main__:Query 5a7cd27e55429909bec76827 not found in qrels
-
-WARNING:__main__:Query 5a8a07475542992e4fca84dc not found in qrels
-
-WARNING:__main__:Query 5a734fb35542992359bc32f7 not found in qrels
-
-WARNING:__main__:Query 5ae5e49f55429929b08079f8 not found in qrels
-
-WARNING:__main__:Query 5a7f92f655429969796c1abc not found in qrels
-
-WARNING:__main__:Query 5abfb4015542990832d3a1c9 not found in qrels
-
-WARNING:__main__:Query 5a80a3205542992bc0c4a792 not found in qrels
-
-WARNING:__main__:Query 5a772aae5542994aec3b7203 not found in qrels
-
-WARNING:__main__:Query 5a78e3d2554299029c4b5eca not found in qrels
-
-WARNING:__main__:Query 5add88645542992ae4cec5a3 not found in qrels
-
-WARNING:__main__:Query 5ab9796c554299753720f818 not found in qrels
-
-WARNING:__main__:Query 5aba5a4d5542994dbf0198ed not found in qrels
-
-WARNING:__main__:Query 5ae78e11554299540e5a55ff not found in qrels
-
-WARNING:__main__:Query 5a7148ac5542994082a3e762 not found in qrels
-
-WARNING:__main__:Query 5a7cd463554299683c1c6391 not found in qrels
-
-WARNING:__main__:Query 5a88b55f5542994846c1cec7 not found in qrels
-
-WARNING:__main__:Query 5ac023ee554299012d1db5b8 not found in qrels
-
-WARNING:__main__:Query 5a84b8275542994c784dda19 not found in qrels
-
-WARNING:__main__:Query 5a8ba7d75542996e8ac88991 not found in qrels
-
-WARNING:__main__:Query 5ac123015542992a796dee03 not found in qrels
-
-WARNING:__main__:Query 5ac42235554299204fd21ef9 not found in qrels
-
-WARNING:__main__:Query 5a8a582a5542995153361372 not found in qrels
-
-WARNING:__main__:Query 5ae3546a5542992e3233c380 not found in qrels
-
-WARNING:__main__:Query 5a7e02d55542991319bc941f not found in qrels
-
-WARNING:__main__:Query 5a8503055542997175ce1f62 not found in qrels
-
-WARNING:__main__:Query 5a8bb6305542995e66a474d8 not found in qrels
-
-WARNING:__main__:Query 5a7281c45542997f827839ef not found in qrels
-
-WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
+<span class="ansi-green-fg">2026-01-02 13:18:26.599</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
 </pre>
 </div>
 </div>
 </div>
-<div id="0e09a536" class="cell" data-execution_count="7">
+<div id="b0a28330" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Sparse retriever evaluation scores --------------------"</span>)</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> sparse_retriever.evaluate(qrels_subset, processed_data)</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -836,7 +620,7 @@ WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
 </div>
 </div>
 <p>Finally, repeat the above calculations for the hybrid retriever.</p>
-<div id="b77bfd5a" class="cell" data-execution_count="8">
+<div id="4f048e55" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>hybrid_retriever <span class="op">=</span> HybridRetriever(client, <span class="st">"HotPotQA_hybrid"</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>hybrid_retriever.create_collection()</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>qrels_subset, processed_data <span class="op">=</span> hybrid_retriever.index_dataset(</span>
@@ -844,120 +628,12 @@ WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <div class="ansi-escaped-output">
-<pre><span class="ansi-green-fg">2026-01-01 14:24:45.127</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
-
-WARNING:__main__:Query 5a8d7341554299441c6b9fe5 not found in qrels
-
-WARNING:__main__:Query 5a83168855429966c78a6b2e not found in qrels
-
-WARNING:__main__:Query 5ae78ec5554299540e5a5605 not found in qrels
-
-WARNING:__main__:Query 5ac1f7f355429964131be2ae not found in qrels
-
-WARNING:__main__:Query 5a8ae49155429951533613a3 not found in qrels
-
-WARNING:__main__:Query 5ab9121555429919ba4e238a not found in qrels
-
-WARNING:__main__:Query 5ae3cf7e5542990afbd1e1e2 not found in qrels
-
-WARNING:__main__:Query 5a7f8a535542994857a76778 not found in qrels
-
-WARNING:__main__:Query 5a7cbd7c554299452d57b9e6 not found in qrels
-
-WARNING:__main__:Query 5ae42a195542995ad6573d0e not found in qrels
-
-WARNING:__main__:Query 5ae1aed65542997f29b3c0ff not found in qrels
-
-WARNING:__main__:Query 5add180e5542992ae4cec45c not found in qrels
-
-WARNING:__main__:Query 5a7c75a655429935c91b51c4 not found in qrels
-
-WARNING:__main__:Query 5aba6de555429955dce3ee1d not found in qrels
-
-WARNING:__main__:Query 5a72d90d55429901807daf53 not found in qrels
-
-WARNING:__main__:Query 5a764234554299109176e6e6 not found in qrels
-
-WARNING:__main__:Query 5a8a30ad5542992d82986eec not found in qrels
-
-WARNING:__main__:Query 5ab96e8a55429970cfb8eae3 not found in qrels
-
-WARNING:__main__:Query 5ab964ae5542996be20204c0 not found in qrels
-
-WARNING:__main__:Query 5ab488f85542990594ba9c58 not found in qrels
-
-WARNING:__main__:Query 5ab31d43554299233954ff0e not found in qrels
-
-WARNING:__main__:Query 5abae0265542996cc5e49ec3 not found in qrels
-
-WARNING:__main__:Query 5ac2c958554299657fa2905b not found in qrels
-
-WARNING:__main__:Query 5a8906515542993b751ca8f0 not found in qrels
-
-WARNING:__main__:Query 5a727c7f5542994cef4bc2d7 not found in qrels
-
-WARNING:__main__:Query 5adf54605542993a75d264c6 not found in qrels
-
-WARNING:__main__:Query 5a7cd27e55429909bec76827 not found in qrels
-
-WARNING:__main__:Query 5a8a07475542992e4fca84dc not found in qrels
-
-WARNING:__main__:Query 5a734fb35542992359bc32f7 not found in qrels
-
-WARNING:__main__:Query 5ae5e49f55429929b08079f8 not found in qrels
-
-WARNING:__main__:Query 5a7f92f655429969796c1abc not found in qrels
-
-WARNING:__main__:Query 5abfb4015542990832d3a1c9 not found in qrels
-
-WARNING:__main__:Query 5a80a3205542992bc0c4a792 not found in qrels
-
-WARNING:__main__:Query 5a772aae5542994aec3b7203 not found in qrels
-
-WARNING:__main__:Query 5a78e3d2554299029c4b5eca not found in qrels
-
-WARNING:__main__:Query 5add88645542992ae4cec5a3 not found in qrels
-
-WARNING:__main__:Query 5ab9796c554299753720f818 not found in qrels
-
-WARNING:__main__:Query 5aba5a4d5542994dbf0198ed not found in qrels
-
-WARNING:__main__:Query 5ae78e11554299540e5a55ff not found in qrels
-
-WARNING:__main__:Query 5a7148ac5542994082a3e762 not found in qrels
-
-WARNING:__main__:Query 5a7cd463554299683c1c6391 not found in qrels
-
-WARNING:__main__:Query 5a88b55f5542994846c1cec7 not found in qrels
-
-WARNING:__main__:Query 5ac023ee554299012d1db5b8 not found in qrels
-
-WARNING:__main__:Query 5a84b8275542994c784dda19 not found in qrels
-
-WARNING:__main__:Query 5a8ba7d75542996e8ac88991 not found in qrels
-
-WARNING:__main__:Query 5ac123015542992a796dee03 not found in qrels
-
-WARNING:__main__:Query 5ac42235554299204fd21ef9 not found in qrels
-
-WARNING:__main__:Query 5a8a582a5542995153361372 not found in qrels
-
-WARNING:__main__:Query 5ae3546a5542992e3233c380 not found in qrels
-
-WARNING:__main__:Query 5a7e02d55542991319bc941f not found in qrels
-
-WARNING:__main__:Query 5a8503055542997175ce1f62 not found in qrels
-
-WARNING:__main__:Query 5a8bb6305542995e66a474d8 not found in qrels
-
-WARNING:__main__:Query 5a7281c45542997f827839ef not found in qrels
-
-WARNING:__main__:Query 5a825f0f55429940e5e1a88d not found in qrels
+<pre><span class="ansi-green-fg">2026-01-02 13:19:41.955</span> | <span class="ansi-yellow-fg ansi-bold">WARNING </span> | <span class="ansi-cyan-fg">fastembed.common.model_management</span>:<span class="ansi-cyan-fg">download_files_from_huggingface</span>:<span class="ansi-cyan-fg">225</span> - <span class="ansi-yellow-fg ansi-bold">Local file sizes do not match the metadata.</span>
 </pre>
 </div>
 </div>
 </div>
-<div id="5cf466fb" class="cell" data-execution_count="9">
+<div id="f076d97c" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"Hybrid retriever evaluation scores --------------------"</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>result <span class="op">=</span> hybrid_retriever.evaluate(qrels_subset, processed_data)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(result)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
