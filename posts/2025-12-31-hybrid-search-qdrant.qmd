@@ -1,0 +1,452 @@
+---
+title: "Hybrid search using Qdrant"
+date: '2025-12-31'
+description: Following Fastembed's article on hybrid search available [here](https://qdrant.github.io/fastembed/examples/Hybrid_Search/) we compare dense, sparse and hybrid retrieval on the HotPotQA dataset. The comparison is done by using the ranx library for evaluation.
+format:
+  html:
+    code-fold: false
+jupyter: python3
+badges: false
+categories:
+- retrieval
+- fastembed
+- qdrant
+- ranx
+- search
+- rag
+---
+
+## Setup
+
+First let's load the appropriate libraries and setup a class for dense, sparse and hybrid retrieval.
+
+```{python}
+# https://qdrant.github.io/fastembed/examples/Hybrid_Search/
+
+import json
+import logging
+from contextlib import contextmanager
+from typing import Dict, List, Optional, Tuple
+
+import fastembed
+import numpy as np
+import pandas as pd
+from datasets import load_dataset
+from fastembed import SparseEmbedding, SparseTextEmbedding, TextEmbedding
+from qdrant_client import QdrantClient, models
+from qdrant_client.models import (
+    Distance,
+    NamedSparseVector,
+    NamedVector,
+    PointStruct,
+    QueryRequest,
+    ScoredPoint,
+    SearchRequest,
+    SparseIndexParams,
+    SparseVector,
+    SparseVectorParams,
+    VectorParams,
+)
+from ranx import Qrels, Run, evaluate
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+fastembed.__version__
+```
+
+Below there will be 3 classes for dense, sparse and hybrid retrieval. Dense retrieval will be done using the light weight "BAAI/bge-small-en-v1.5" model, while sparse retrieval will be done using the bm25 model from qdrant. The bm25 model actually has 2 hyperparameters for document length and keyword influence which can't be changed with the current setup. The hybrid retrieval model will retrieve using the dense and sparse models and then combine the scores from each model using reciprocal rank fusion (RRF). This is the standard technique for combining dense and sparse search results, used in libraries such as LangChain, because of its simplicity and robustness. See [here](https://qdrant.github.io/fastembed/examples/Hybrid_Search) for implementation details in numpy and links to the original paper which introduces RRF. More details about hybrid search, and other methods for combining search results such as reranking and Matryoshka embeddings can be found [here](https://qdrant.tech/articles/hybrid-search/).
+
+The ```BaseRetriever``` class also has an ```evaluate``` method which calculates "ndcg@5", "recall@3", "precision@3", and "mrr" using the [ranx](https://github.com/amenra/ranx) library. NDCG (normalized discounted cumulative gain) is the standard in search engine evaluation which works best with ranked data, such as the ground truth data for recommendation engines. The other metrics are simpler and useful when simpler labels are available.
+
+```{python}
+class BaseRetriever:
+    """Base class for retrieval systems."""
+
+    def __init__(
+        self,
+        client: QdrantClient,
+        collection_name: str,
+        batch_size: int = 32,
+        embedding_limit: int = 1000,
+    ):
+        self.client = client
+        self.collection_name = collection_name
+        self.batch_size = batch_size
+        self.embedding_limit = embedding_limit
+
+    def index_dataset(self, dataset, corpus: Dict, qrels) -> Tuple[Dict, Dict]:
+        """Index dataset with deduplication."""
+        processed_data = {}
+        unique_docs = {}
+        qrels_subset = {}
+        qrels_dict = qrels.to_dict()
+
+        try:
+            for item in dataset:
+                query_id = item["id"]
+                if query_id not in qrels_dict:
+                    logger.warning(f"Query {query_id} not found in qrels")
+                    continue
+
+                qrels_entry = qrels_dict[query_id]
+                qrels_subset[query_id] = qrels_entry
+
+                item_data = {"question": item["question"], "item": item}
+
+                for doc_id in qrels_entry.keys():
+                    if doc_id in corpus and doc_id not in unique_docs:
+                        unique_docs[doc_id] = corpus[doc_id]
+                    if doc_id in corpus:
+                        item_data[doc_id] = corpus[doc_id].text
+
+                processed_data[query_id] = item_data
+
+            # Process unique documents only
+            self._index_documents(unique_docs)
+
+        except Exception as e:
+            logger.error(f"Error during indexing: {e}")
+            raise
+
+        return qrels_subset, processed_data
+
+    def _index_documents(self, documents: Dict):
+        """Override in subclasses."""
+        raise NotImplementedError
+
+    def evaluate(
+        self, qrels: Dict, processed_data: Dict, metrics: Optional[List[str]] = None
+    ) -> Dict:
+        """Evaluate retrieval performance."""
+        if metrics is None:
+            metrics = ["ndcg@5", "recall@3", "precision@3", "mrr"]
+
+        run_dict = {}
+
+        try:
+            for question_id, item in processed_data.items():
+                search_result = self.search(item["question"])
+                result_dict = {
+                    result.payload["id"]: result.score for result in search_result.points
+                }
+                run_dict[question_id] = result_dict
+
+            qrels_obj = Qrels(qrels)
+            run_obj = Run(run_dict)
+
+            return evaluate(qrels_obj, run_obj, metrics)
+
+        except Exception as e:
+            logger.error(f"Error during evaluation: {e}")
+            raise
+
+
+class HybridRetriever(BaseRetriever):
+    """
+        This retriever combines dense embeddings with sparse embeddings
+        using reciprocal rank fusion (RRF).
+    """
+
+    def __init__(
+        self,
+        client,
+        collection_name: str,
+        batch_size: int = 32,
+        embedding_limit: int = 384,
+        sparse_model_name: str = "Qdrant/bm25",
+        dense_model_name: str = "BAAI/bge-small-en-v1.5",
+    ):
+        super().__init__(client, collection_name, batch_size, embedding_limit)
+
+        # This triggers the model download
+        self.sparse_model = SparseTextEmbedding(
+            model_name=sparse_model_name, batch_size=self.batch_size
+        )
+        self.dense_model = TextEmbedding(model_name=dense_model_name, batch_size=self.batch_size)
+
+    def create_collection(self):
+        self.client.create_collection(
+            self.collection_name,
+            vectors_config={
+                "text-dense": VectorParams(
+                    size=self.embedding_limit,
+                    distance=Distance.COSINE,
+                )
+            },
+            sparse_vectors_config={
+                "text-sparse": SparseVectorParams(
+                    index=SparseIndexParams(
+                        on_disk=False,
+                    )
+                )
+            },
+        )
+
+    def make_sparse_embedding(self, texts: list[str]) -> list[SparseEmbedding]:
+        return list(self.sparse_model.embed(texts, batch_size=32))
+
+    def make_dense_embedding(self, texts: list[str]) -> list[np.ndarray]:
+        return list(self.dense_model.embed(texts))
+
+    def _index_documents(self, documents: Dict):
+        texts = [documents[doc_id].text for doc_id in documents.keys()]
+        sparse_vectors = self.make_sparse_embedding(texts)
+        dense_vectors = self.make_dense_embedding(texts)
+        points = []
+        for idx, (doc_id, sparse_vector, dense_vector) in enumerate(
+            zip(documents.keys(), sparse_vectors, dense_vectors)
+        ):
+            sparse_vector = SparseVector(
+                indices=sparse_vector.indices.tolist(), values=sparse_vector.values.tolist()
+            )
+            point = PointStruct(
+                id=idx,
+                payload={
+                    "text": documents[doc_id].text,
+                    "id": doc_id,
+                },  # Add any additional payload if necessary
+                vector={
+                    "text-sparse": sparse_vector,
+                    "text-dense": dense_vector.tolist(),
+                },
+            )
+            points.append(point)
+
+        self.client.upsert(self.collection_name, points)
+
+    def search(self, query_text: str, limit: int = 10):
+        query_sparse_vectors: list[SparseEmbedding] = self.make_sparse_embedding([query_text])
+        query_dense_vector: list[np.ndarray] = self.make_dense_embedding([query_text])
+
+        search_results = self.client.query_points(
+            collection_name=self.collection_name,
+            prefetch=[
+                QueryRequest(
+                    query=query_dense_vector[0].tolist(),
+                    using="text-dense",
+                    limit=limit,
+                    with_payload=True,
+                ),
+                QueryRequest(
+                    query=SparseVector(
+                        indices=query_sparse_vectors[0].indices.tolist(),
+                        values=query_sparse_vectors[0].values.tolist(),
+                    ),
+                    using="text-sparse",
+                    limit=limit,
+                    with_payload=True,
+                ),
+            ],
+            query=models.FusionQuery(fusion=models.Fusion.RRF),
+        )
+
+        return search_results
+
+
+class SparseRetriever(HybridRetriever):
+    """
+    Simple sparse retriever that defaults to bm25.
+    """
+
+    def __init__(
+        self,
+        client,
+        collection_name: str,
+        batch_size: int = 32,
+        embedding_limit: int = 384,
+        sparse_model_name: str = "Qdrant/bm25",
+    ):
+        super().__init__(client, collection_name, batch_size, embedding_limit)
+
+        # This triggers the model download
+        self.sparse_model = SparseTextEmbedding(
+            model_name=sparse_model_name, batch_size=self.batch_size
+        )
+
+    def create_collection(self):
+        self.client.create_collection(
+            self.collection_name,
+            sparse_vectors_config={
+                "text-sparse": SparseVectorParams(
+                    index=SparseIndexParams(
+                        on_disk=False,
+                    )
+                )
+            },
+        )
+
+    def _index_documents(self, documents: Dict):
+        texts = [documents[doc_id].text for doc_id in documents.keys()]
+        sparse_vectors = self.make_sparse_embedding(texts)
+
+        points = []
+        for idx, (doc_id, sparse_vector) in enumerate(zip(documents.keys(), sparse_vectors)):
+            sparse_vector = SparseVector(
+                indices=sparse_vector.indices.tolist(), values=sparse_vector.values.tolist()
+            )
+            point = PointStruct(
+                id=idx,
+                payload={
+                    "text": documents[doc_id].text,
+                    "id": doc_id,
+                },  # Add any additional payload if necessary
+                vector={"text-sparse": sparse_vector},
+            )
+            points.append(point)
+
+        self.client.upsert(self.collection_name, points)
+
+    def search(self, query_text: str, limit: int = 10):
+        query_sparse_vectors: list[SparseEmbedding] = self.make_sparse_embedding([query_text])
+
+        search_results = self.client.query_points(
+            collection_name=self.collection_name,
+            query=SparseVector(
+                indices=query_sparse_vectors[0].indices.tolist(),
+                values=query_sparse_vectors[0].values.tolist(),
+            ),
+            using="text-sparse",
+            limit=limit,
+            with_payload=True,
+        )
+
+        return search_results
+
+
+class DenseRetriever(HybridRetriever):
+    """
+    Simple dense retriever that defaults to BAAI/bge-small-en-v1.5.
+    """
+    
+    def __init__(
+        self,
+        client,
+        collection_name: str,
+        batch_size: int = 32,
+        embedding_limit: int = 384,
+        dense_model_name: str = "BAAI/bge-small-en-v1.5",
+    ):
+        super().__init__(client, collection_name, batch_size, embedding_limit)
+
+        # This triggers the model download
+        self.dense_model = TextEmbedding(model_name=dense_model_name, batch_size=self.batch_size)
+
+    def create_collection(self):
+        self.client.create_collection(
+            self.collection_name,
+            vectors_config={
+                "text-dense": VectorParams(
+                    size=self.embedding_limit,
+                    distance=Distance.COSINE,
+                )
+            },
+        )
+
+    def _index_documents(self, documents: Dict):
+        texts = [documents[doc_id].text for doc_id in documents.keys()]
+        dense_vectors = self.make_dense_embedding(texts)
+        points = []
+        for idx, (doc_id, dense_vector) in enumerate(zip(documents.keys(), dense_vectors)):
+            point = PointStruct(
+                id=idx,
+                payload={
+                    "text": documents[doc_id].text,
+                    "id": doc_id,
+                },  # Add any additional payload if necessary
+                vector={
+                    "text-dense": dense_vector.tolist(),
+                },
+            )
+            points.append(point)
+
+        self.client.upsert(self.collection_name, points)
+
+    def search(self, query_text: str, limit: int = 10):
+        query_dense_vector: list[np.ndarray] = self.make_dense_embedding([query_text])
+
+        search_results = self.client.query_points(
+            collection_name=self.collection_name,
+            using="text-dense",
+            limit=limit,
+            with_payload=True,
+            query=query_dense_vector[0].tolist(),
+        )
+
+        return search_results
+```
+
+Below we load the HotPotQA dataset using HuggingFace, as well as the ground truth search results
+using ```ir_datasets```.
+
+```{python}
+import ir_datasets
+
+client = QdrantClient(":memory:")
+subset_size = 1000
+
+qrels = Qrels.from_ir_datasets("beir/hotpotqa/train")
+dataset = load_dataset("hotpot_qa", "distractor", split="train")
+
+hotpot_dataset = ir_datasets.load("beir/hotpotqa/train")
+# Get the corpus (all documents)
+corpus = {doc.doc_id: doc for doc in hotpot_dataset.docs_iter()}
+```
+
+## Evaluation
+
+First create a dense retriever instance, and index a subset of the HotPotQA
+dataset into an in memory instance of Qdrant.
+
+```{python}
+dense_retriever = DenseRetriever(client, "HotPotQA_dense")
+dense_retriever.create_collection()
+qrels_subset, processed_data = dense_retriever.index_dataset(
+    dataset.select(range(0, min(subset_size, len(dataset)))), corpus, qrels
+)
+```
+
+Below we run the dense retriver on the ```processed_data``` and evaluate the search results
+using ```qrels_subset``` as the ground truth search results. The evaluation method
+was described earlier and is in the ```BaseRetriever``` class.
+
+```{python}
+print("Dense retriever evaluation scores --------------------")
+result = dense_retriever.evaluate(qrels_subset, processed_data)
+print(result)
+```
+
+Now the same calculations are repeated for the sparse retriever.
+
+```{python}
+sparse_retriever = SparseRetriever(client, "HotPotQA_sparse")
+sparse_retriever.create_collection()
+qrels_subset, processed_data = sparse_retriever.index_dataset(
+    dataset.select(range(0, min(subset_size, len(dataset)))), corpus, qrels
+)
+```
+```{python}
+print("Sparse retriever evaluation scores --------------------")
+result = sparse_retriever.evaluate(qrels_subset, processed_data)
+print(result)
+```
+
+Finally, repeat the above calculations for the hybrid retriever.
+
+```{python}
+hybrid_retriever = HybridRetriever(client, "HotPotQA_hybrid")
+hybrid_retriever.create_collection()
+qrels_subset, processed_data = hybrid_retriever.index_dataset(
+    dataset.select(range(0, min(subset_size, len(dataset)))), corpus, qrels
+)
+```
+
+```{python}
+print("Hybrid retriever evaluation scores --------------------")
+result = hybrid_retriever.evaluate(qrels_subset, processed_data)
+print(result)
+```
+
+## Conclusion
+
+[As expected](https://cormack.uwaterloo.ca/cormacksigir09-rrf.pdf), all metrics for the hybrid retriever are better than that of either the dense retriever or the sparse retriever. 
