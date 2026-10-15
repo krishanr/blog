@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,10 +11,16 @@
 
 <title>Standard probability distributions – Krishan Rajaratnam’s blog</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -61,7 +67,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -94,10 +99,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d7d234f6c0444e3055897b62edb48b25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -127,7 +132,7 @@ div.csl-indent {
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -140,7 +145,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -259,12 +264,12 @@ window.Quarto = {
 <p>We’ll review elementary univariate probability distributions in statistics, including how the mean/variance are derived, simple relationships, and the questions they answer, with calculations done in scipy.</p>
 <p>This review is similar in spirit to <a href="https://www.stat.umn.edu/geyer/5101/notes/brand.pdf">brand name distributions</a> and <a href="http://www.math.wm.edu/~leemis/2008amstat.pdf">univariate distribution relationships</a>.</p>
 <div id="d18805b1" class="cell">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.special <span class="im">as</span> sp</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.special <span class="im">as</span> sp</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> scipy.stats <span class="im">as</span> ss</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>The univariate probability distributions answer questions about events occuring on a discrete time interval <span class="math inline">\(D_n = [0, 1, \dotsc, n ]\)</span> or a continuous time interval <span class="math inline">\(I_t = [0, t]\)</span>.</p>
 <p>In the discrete case each event could be a success with probability <span class="math inline">\(p\)</span> or a failure with probability <span class="math inline">\(1-p\)</span>, with different events being independent. Then we can ask the following questions:</p>
@@ -287,30 +292,30 @@ window.Quarto = {
 <p>Suppose X is a random variable denoting having a trial with a probability of success <span class="math inline">\(p\)</span>. It gives a success, <span class="math inline">\(X = 1\)</span>, with probability <span class="math inline">\(p\)</span> and failure, <span class="math inline">\(X = 0\)</span>, with probability <span class="math inline">\(1-p\)</span>. Then <span class="math inline">\(X \sim \operatorname{Ber}(p)\)</span>, and</p>
 <p><span class="math display">\[\mathbb{E}[X] = p,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = p (1-p)\]</span></p>
 <div id="b01d9653" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.bernoulli(p)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">'mvsk'</span>)</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean 0.4, var 0.24, skew 0.40824829046386296, kurt -1.8333333333333337</code></pre>
 </div>
 </div>
 <div id="a0cd0cbf" class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rv.interval(<span class="fl">0.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>rv.interval(<span class="fl">0.99</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="8">
 <pre><code>(0.0, 1.0)</code></pre>
 </div>
 </div>
 <div id="910b3450" class="cell" data-scrolled="true" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.binomial(<span class="dv">1</span>, p, size<span class="op">=</span><span class="dv">100</span>)</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>ax.legend(loc<span class="op">=</span><span class="st">'upper right'</span>)</span>
-<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Bernoulli Distribution'</span>, xlabel<span class="op">=</span><span class="st">'y'</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">'Bernoulli Distribution'</span>, xlabel<span class="op">=</span><span class="st">'y'</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -321,7 +326,7 @@ window.Quarto = {
 </div>
 <p>P(X = 1) is calculated using the probability mass function below:</p>
 <div id="4c43cb3f" class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rv.pmf(<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>rv.pmf(<span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 <pre><code>0.4</code></pre>
 </div>
@@ -334,23 +339,23 @@ window.Quarto = {
 <p>and a straightforward calculation gives</p>
 <p><span class="math display">\[\mathbb{E}[X] = n p,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = n p (1-p)\]</span></p>
 <div id="a4eab605" class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p, n <span class="op">=</span> <span class="fl">0.4</span>, <span class="dv">10</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>p, n <span class="op">=</span> <span class="fl">0.4</span>, <span class="dv">10</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.binom(n, p)</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean 4.0, var 2.3999999999999995, skew 0.1290994448735805, kurt -0.1833333333333333</code></pre>
 </div>
 </div>
 <div id="80d9d4e3" class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.binomial(n, p, size<span class="op">=</span><span class="dv">200</span>)</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Binomial distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Binomial distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -361,14 +366,14 @@ window.Quarto = {
 </div>
 <p>P(X = 3) is calculated using the probability mass function below:</p>
 <div id="fa1526e7" class="cell" data-execution_count="117">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rv.pmf(<span class="dv">3</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>rv.pmf(<span class="dv">3</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="117">
 <pre><code>0.21499084799999976</code></pre>
 </div>
 </div>
 <p>Do a quick check that the probability mass function is normalized:</p>
 <div id="6d0f2926" class="cell" data-execution_count="129">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">sum</span> (rv.pmf(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n<span class="op">+</span><span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">sum</span> (rv.pmf(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n<span class="op">+</span><span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="129">
 <pre><code>0.9999999999999994</code></pre>
 </div>
@@ -381,23 +386,23 @@ window.Quarto = {
 <p>Using the probability generating function we calculate:</p>
 <p><span class="math display">\[\mathbb{E}[X] = \frac{1}{p},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \frac{1-p}{p^2}\]</span></p>
 <div id="c25e0bf2" class="cell" data-execution_count="132">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.geom(p)</span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean 2.5, var 3.749999999999999, skew 2.0655911179772892, kurt 6.2666666666666675</code></pre>
 </div>
 </div>
 <div id="fdc1b166" class="cell" data-execution_count="139">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.geometric(p, size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label <span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Geometric Distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Geometric Distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -418,25 +423,25 @@ window.Quarto = {
 <p>where <span class="math inline">\(k\)</span> is the number of failures seen before seeing a total of <span class="math inline">\(r\)</span> successes.</p>
 <p><span class="math display">\[\mathbb{E}[X] = \frac{r (1-p)}{p},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = r\frac{(1-p)}{p^2}\]</span></p>
 <div id="6e634023" class="cell" data-execution_count="167">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>p <span class="op">=</span> <span class="fl">0.4</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>r <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.nbinom(r, p)</span>
 <span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean 5.999999999999999, var 14.999999999999996, skew 1.0327955589886446, kurt 1.5666666666666669</code></pre>
 </div>
 </div>
 <div id="5db91051" class="cell" data-scrolled="true" data-execution_count="170">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.negative_binomial(r, p, size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
-<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Negative Binomial distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Negative Binomial distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -455,23 +460,23 @@ window.Quarto = {
 <p>Note that the time till the first event in a Poisson process is described by the exponential distribution with parameter <span class="math inline">\(\lambda\)</span>, and the time till the first <span class="math inline">\(r\)</span> events in a Poisson process is described by the Erlang (Gamma) distribution with shape <span class="math inline">\(r\)</span> and rate <span class="math inline">\(\lambda\)</span>. See below for definitions.</p>
 <p>Also see section 20.2 from the stats cookbook for a good summary of the Poisson process and the different distributions involved.</p>
 <div id="ec00b252" class="cell" data-execution_count="185">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="dv">6</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="dv">6</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.poisson(mu)</span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>mean, var, skew, kurt <span class="op">=</span> rv.stats(moments<span class="op">=</span><span class="st">"mvsk"</span>)</span>
-<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-6"><a href="#cb22-6" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">"mean </span><span class="sc">{}</span><span class="st">, var </span><span class="sc">{}</span><span class="st">, skew </span><span class="sc">{}</span><span class="st">, kurt </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(mean, var, skew, kurt))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>mean 6.0, var 6.0, skew 0.408248290463863, kurt 0.16666666666666666</code></pre>
 </div>
 </div>
 <div id="31e110a2" class="cell" data-execution_count="189">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.random.poisson(mu, size<span class="op">=</span><span class="dv">1000</span>)</span>
 <span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>sns.countplot(x<span class="op">=</span>y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>, ax<span class="op">=</span>ax)</span>
 <span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>ax.legend(<span class="st">"upper right"</span>)</span>
-<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Poisson distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Poisson distribution"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -491,22 +496,22 @@ window.Quarto = {
 <p><span class="math display">\[\mathbb{E}[X] = \frac{\alpha}{\beta},  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \frac{\alpha}{\beta^2}\]</span> <span class="math display">\[\operatorname{mode}{X} = \frac{(\alpha-1)}{\beta} \]</span></p>
 <p>We parameterize the Gamma distribution in scipy as follows.</p>
 <div id="8fd0d737" class="cell" data-execution_count="80">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>alpha, beta  <span class="op">=</span> <span class="dv">3</span>, <span class="dv">1</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.gamma(a<span class="op">=</span>alpha,scale<span class="op">=</span><span class="dv">1</span><span class="op">/</span>beta)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>alpha, beta  <span class="op">=</span> <span class="dv">3</span>, <span class="dv">1</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>rv <span class="op">=</span> ss.gamma(a<span class="op">=</span>alpha,scale<span class="op">=</span><span class="dv">1</span><span class="op">/</span>beta)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="71d86356" class="cell" data-scrolled="true" data-execution_count="81">
-<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>rv.interval(<span class="fl">0.99</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>rv.interval(<span class="fl">0.99</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="81">
 <pre><code>(0.33786338872773347, 9.273792089255544)</code></pre>
 </div>
 </div>
 <div id="b731ce05" class="cell" data-execution_count="85">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">1</span>)</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.linspace(<span class="dv">0</span>, rv.ppf(<span class="fl">0.999</span>), <span class="dv">100</span>)</span>
 <span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>ax.plot(x, rv.pdf(x), <span class="st">'r-'</span>, lw<span class="op">=</span><span class="dv">2</span>, alpha<span class="op">=</span><span class="fl">0.6</span>, label<span class="op">=</span><span class="st">'gamma pdf'</span>)</span>
-<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Gamma PDF"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>ax.<span class="bu">set</span>(title<span class="op">=</span><span class="st">"Gamma PDF"</span>, xlabel<span class="op">=</span><span class="st">"y"</span>)<span class="op">;</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -584,15 +589,15 @@ window.Quarto = {
 <p><span class="math display">\[\mathbb{E}[X] = \mu,  \: \: \mathbb{E}[(X - \mathbb{E}[X] )^2] = \sigma\]</span> <span class="math display">\[\operatorname{mode}{X} = \mu \]</span></p>
 <p>Now consider a sequence <span class="math inline">\(X_1\)</span>, <span class="math inline">\(X_2\)</span>, … of independent and identically distributed random variables each with mean <span class="math inline">\(\mu\)</span> and standard deviation <span class="math inline">\(\sigma\)</span> (good examples being the Bernoulli and Exponential distributions). Let <span class="math inline">\(S_n = X_1 + X_2 + \dots + X_n\)</span> be their partial sums, then the <em>weak law of large numbers</em><a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a> says that <span class="math inline">\(\frac{S_n}{n}\)</span> converges to <span class="math inline">\(\mu\)</span> in distribution as <span class="math inline">\(n\)</span> approaches <span class="math inline">\(\infty\)</span> (see section 5.10 in <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span>). We’ll illustrate this theorem by way of example below.</p>
 <div id="9cdd9b9d" class="cell" data-execution_count="83">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>lam <span class="op">=</span> <span class="fl">0.5</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>lam <span class="op">=</span> <span class="fl">0.5</span></span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>mu <span class="op">=</span> <span class="dv">2</span></span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> draw(n):</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.random.exponential(mu, size<span class="op">=</span>n)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.random.exponential(mu, size<span class="op">=</span>n)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Below we’ll plot the distribution of <span class="math inline">\(\frac{S_n}{n}\)</span> for <span class="math inline">\(n = 1, 100\)</span> and <span class="math inline">\(1000\)</span> to see the weak law in action.</p>
 <div id="daf53222" class="cell" data-execution_count="84">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ <span class="bu">sum</span>(draw(n))<span class="op">/</span>n <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
@@ -612,7 +617,7 @@ window.Quarto = {
 <span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
 <span id="cb30-19"><a href="#cb30-19" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="ss">f"Average of </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> IID random variables"</span>)</span>
 <span id="cb30-20"><a href="#cb30-20" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'Illustration of the Weak Law of Large Numbers'</span>)</span>
-<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb30-21"><a href="#cb30-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -623,7 +628,7 @@ window.Quarto = {
 </div>
 <p>It clearly looks like the errors in <span class="math inline">\(\frac{S_n}{n} - \mu\)</span> are approaching a normal distribution, in fact <span class="math inline">\((S_n - n \mu)/ \sqrt{n \sigma^2}\)</span> approaches <span class="math inline">\(N(0,1)\)</span> in distribution as <span class="math inline">\(n\)</span> approaches <span class="math inline">\(\infty\)</span> (provided the <span class="math inline">\(X_i\)</span>s has finite non-zero variance, <span class="citation" data-cites="Grimmett2001ProbabilityAR">(<a href="#ref-Grimmett2001ProbabilityAR" role="doc-biblioref">Grimmett and Stirzaker 2001</a>)</span>). This fact is the famous <em>central limit theorem</em>, which we’ll illustrate below.</p>
 <div id="7b952766" class="cell" data-execution_count="79">
-<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>fig <span class="op">=</span> plt.figure(figsize<span class="op">=</span>(<span class="dv">10</span>,<span class="dv">10</span>))</span>
 <span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">1</span></span>
 <span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([ <span class="bu">sum</span>(draw(n))<span class="op">/</span>n <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1000</span>) ] )</span>
@@ -643,7 +648,7 @@ window.Quarto = {
 <span id="cb31-18"><a href="#cb31-18" aria-hidden="true" tabindex="-1"></a>ax.hist(y, label<span class="op">=</span><span class="ss">f'mean = </span><span class="sc">{</span>y<span class="sc">.</span>mean()<span class="sc">: 0.3f}</span><span class="ss">'</span>)</span>
 <span id="cb31-19"><a href="#cb31-19" aria-hidden="true" tabindex="-1"></a>ax.title.set_text(<span class="ss">f"Errors of </span><span class="sc">{</span>n<span class="sc">}</span><span class="ss"> IID random variables"</span>)</span>
 <span id="cb31-20"><a href="#cb31-20" aria-hidden="true" tabindex="-1"></a>fig.suptitle(<span class="st">'Illustration of the Central Limit Theorem'</span>)</span>
-<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb31-21"><a href="#cb31-21" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -664,12 +669,12 @@ window.Quarto = {
 </section>
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-Grimmett2001ProbabilityAR" class="csl-entry" role="listitem">
-Grimmett, Geoffrey R., and David R. Stirzaker. 2001. <span>“Probability and Random Processes.”</span> In.
+Grimmett, Geoffrey R., and David R. Stirzaker. 2001. <span>“Probability and Random Processes.”</span>
 </div>
 <div id="ref-Murphy2012MachineL" class="csl-entry" role="listitem">
-Murphy, Kevin P. 2012. <span>“Machine Learning - a Probabilistic Perspective.”</span> In.
+Murphy, Kevin P. 2012. <span>“Machine Learning - a Probabilistic Perspective.”</span>
 </div>
 </div></section><section id="footnotes" class="footnotes footnotes-end-of-document" role="doc-endnotes"><h2 class="anchored quarto-appendix-heading">Footnotes</h2>
 
@@ -728,13 +733,14 @@ Murphy, Kevin P. 2012. <span>“Machine Learning - a Probabilistic Perspective.�
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

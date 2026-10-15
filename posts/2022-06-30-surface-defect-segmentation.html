@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,10 +11,16 @@
 
 <title>Surface Defect Segmentation – Krishan Rajaratnam’s blog</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -60,7 +66,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </style>
 
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.1/dist/jquery.min.js" integrity="sha384-ZvpUoO/+PpLXR1lu4jmpXWu80pZlYUAfxl5NsBMWOEPSjUn/6Z/hRTt8+pR6L4N2" crossorigin="anonymous"></script><script src="../site_libs/quarto-nav/quarto-nav.js"></script>
 <script src="../site_libs/quarto-nav/headroom.min.js"></script>
 <script src="../site_libs/clipboard/clipboard.min.js"></script>
 <script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
@@ -74,10 +80,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d7d234f6c0444e3055897b62edb48b25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -105,10 +111,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     "search-label": "Search"
   }
 }</script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" integrity="sha512-c3Nl8+7g4LMSTdrm621y7kf9v3SDPnhxLNhcjFJbKECVnmZHTdo+IRO05sNLTH/D3vA6u1X32ehoLC7WFVdheg==" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/requirejs@2.3.6/require.min.js" integrity="sha384-c9c+LnTbwQ3aujuU7ULEPVvgLs+Fn6fJUvIGTsuu1ZcCf11fiEubah0ttpca4ntM sha384-6V1/AdqZRWk1KAlWbKBlGhN7VG4iE/yAZcO6NZPMF8od0vukrvr0tg4qY6NSrItx" crossorigin="anonymous"></script>
 
 <script type="application/javascript">define('jquery', [],function() {return window.jQuery;})</script>
-<script src="https://unpkg.com/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@*/dist/embed-amd.js" crossorigin="anonymous"></script>
 
 
 <link rel="stylesheet" href="../styles.css">
@@ -215,15 +221,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This code is built with the help of <a href="https://github.com/MitraDP/Detection-of-Surface-Defects-in-Magnetic-Tile-Images">Detection of Surface Defects in Magnetic Tile Images</a> by Dr.&nbsp;Mitra P. Danesh.</p>
 <p>To install the required packages, usually it’s sufficient to run the cell below (for example on Google Colab or Paperspace using the PyTorch runtime). If PyTorch is not installed, then uncomment the first line of the cell below to install it.</p>
 <div id="cell-3" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncomment the following line if run in the jupyter tensorflow Docker image.</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Uncomment the following line if run in the jupyter tensorflow Docker image.</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install torch torchvision </span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>U git<span class="op">+</span>https:<span class="op">//</span>github.com<span class="op">/</span>qubvel<span class="op">/</span>segmentation_models.pytorch</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install pytorch<span class="op">-</span>lightning</span>
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install mlflow</span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install watermark</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install watermark</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-4" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:18.144634Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:18.144167Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.073361Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.072633Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:18.144413Z&quot;}}" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> math</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
@@ -240,26 +246,26 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="co"># set the random seeds for reproducibility</span></span>
 <span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>random.seed(<span class="dv">42</span>)</span>
 <span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>torch.manual_seed(<span class="dv">0</span>)</span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>np.random.seed(<span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <section id="loading-data" class="level2">
 <h2 class="anchored" data-anchor-id="loading-data">Loading data</h2>
 <div id="cell-6" class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> random_split</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> random_split</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.transforms <span class="im">as</span> transforms</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torch.utils.data <span class="im">import</span> Dataset</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> PIL <span class="im">import</span> Image</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> glob <span class="im">import</span> glob</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> glob <span class="im">import</span> glob</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>First download the data locally.</p>
 <div id="cell-8" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>capture</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="op">%%</span>capture</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>wget <span class="op">-</span>O data.<span class="bu">zip</span> https:<span class="op">//</span>github.com<span class="op">/</span>abin24<span class="op">/</span>Magnetic<span class="op">-</span>tile<span class="op">-</span>defect<span class="op">-</span>datasets.<span class="op">/</span>archive<span class="op">/</span>master.<span class="bu">zip</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>unzip data.<span class="bu">zip</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>mv Magnetic<span class="op">-</span>tile<span class="op">-</span>defect<span class="op">-</span>datasets.<span class="op">-</span>master data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>mv Magnetic<span class="op">-</span>tile<span class="op">-</span>defect<span class="op">-</span>datasets.<span class="op">-</span>master data</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-9" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.084704Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.084559Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.163845Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.163185Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.084688Z&quot;}}" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>classes <span class="op">=</span>[<span class="st">'Blowhole'</span>, <span class="st">'Crack'</span>,<span class="st">'Free'</span>] <span class="co"># classes/labels</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>classes <span class="op">=</span>[<span class="st">'Blowhole'</span>, <span class="st">'Crack'</span>,<span class="st">'Free'</span>] <span class="co"># classes/labels</span></span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>image_paths <span class="op">=</span> []</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> c <span class="kw">in</span> classes:</span>
@@ -270,10 +276,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="cf">else</span>:</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>        image_paths.extend( images_found )        </span>
 <span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>random.shuffle(image_paths)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>random.shuffle(image_paths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-10" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.168993Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.168834Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.177323Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.176720Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.168976Z&quot;}}" data-outputid="cb27e652-ac85-4192-e97f-cbfab5f760e2" data-scrolled="true" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(image_paths)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="bu">len</span>(image_paths)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
 <pre><code>252</code></pre>
 </div>
@@ -283,7 +289,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>Writing helper class for data extraction, tranformation and preprocessing<br>
 https://pytorch.org/docs/stable/data. Also see the <a href="https://github.com/qubvel/segmentation_models.pytorch/blob/master/examples/binary_segmentation_intro.ipynb">binary segmentation intro</a> in the segmentation models library for more details on designing the Dataset class. For more sophisticated data augmentations, see the <a href="https://albumentations.ai/">albumentations</a> library and specifically <a href="https://github.com/qubvel/segmentation_models.pytorch/blob/master/examples/cars%20segmentation%20(camvid).ipynb">this</a> notebook from segmentation models.</p>
 <div id="cell-12" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.178391Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.178245Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.185976Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.185457Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.178374Z&quot;}}" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.transforms.functional <span class="im">as</span> TF</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torchvision.transforms.functional <span class="im">as</span> TF</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SurfaceDefectDetectionDataset(Dataset):</span>
@@ -330,21 +336,21 @@ https://pytorch.org/docs/stable/data. Also see the <a href="https://github.com/q
 <span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>        mask <span class="op">=</span> (mask <span class="op">&gt;=</span> <span class="fl">0.5</span>)<span class="op">*</span>(<span class="fl">1.0</span>)</span>
 <span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>        </span>
 <span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        <span class="co">#return the image and mask pair tensors</span></span>
-<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> image, mask</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>        <span class="cf">return</span> image, mask</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-13" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.186816Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.186667Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.190413Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.189876Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.186799Z&quot;}}" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>split_len <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span><span class="op">*</span><span class="bu">len</span>(image_paths))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>split_len <span class="op">=</span> <span class="bu">int</span>(<span class="fl">0.8</span><span class="op">*</span><span class="bu">len</span>(image_paths))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>train_dataset <span class="op">=</span> SurfaceDefectDetectionDataset(image_paths[:split_len], use_transform <span class="op">=</span> <span class="va">True</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>test_dataset <span class="op">=</span> SurfaceDefectDetectionDataset(image_paths[split_len:], use_transform <span class="op">=</span> <span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>test_dataset <span class="op">=</span> SurfaceDefectDetectionDataset(image_paths[split_len:], use_transform <span class="op">=</span> <span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We’ll randomly split the train and validation set, but fix the random seed to fix these datasets.</p>
 <div id="cell-15" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.191315Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.191164Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.195693Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.195117Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.191298Z&quot;}}" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>train_dataset, val_dataset <span class="op">=</span> random_split(train_dataset, [<span class="bu">int</span>(split_len<span class="op">*</span><span class="fl">0.9</span>), split_len <span class="op">-</span> <span class="bu">int</span>(split_len<span class="op">*</span><span class="fl">0.9</span>)], generator<span class="op">=</span>torch.Generator().manual_seed(<span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>train_dataset, val_dataset <span class="op">=</span> random_split(train_dataset, [<span class="bu">int</span>(split_len<span class="op">*</span><span class="fl">0.9</span>), split_len <span class="op">-</span> <span class="bu">int</span>(split_len<span class="op">*</span><span class="fl">0.9</span>)], generator<span class="op">=</span>torch.Generator().manual_seed(<span class="dv">1</span>))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-16" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.198454Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.197704Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:23.202128Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:23.201548Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.198429Z&quot;}}" data-outputid="94291187-13c2-4be0-ee15-8fc97134bd36" data-scrolled="true" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Length of train dataset: '</span>, <span class="bu">len</span>(train_dataset))</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Length of train dataset: '</span>, <span class="bu">len</span>(train_dataset))</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Length of validation dataset: '</span>, <span class="bu">len</span>(val_dataset))</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Length of test dataset: '</span>, <span class="bu">len</span>(test_dataset))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'Length of test dataset: '</span>, <span class="bu">len</span>(test_dataset))</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Length of train dataset:  180
 Length of validation dataset:  21
@@ -354,7 +360,7 @@ Length of test dataset:  51</code></pre>
 <section id="lets-take-a-look-at-the-dataset" class="level4">
 <h4 class="anchored" data-anchor-id="lets-take-a-look-at-the-dataset">Let’s take a look at the dataset</h4>
 <div id="cell-18" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:23.203201Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:23.203041Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:24.799500Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:24.798887Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:23.203181Z&quot;}}" data-outputid="10428a76-bffa-492b-a071-29de925e637d" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> random</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>sample_img, sample_msk <span class="op">=</span> train_dataset[random.choice(<span class="bu">range</span>(<span class="bu">len</span>(train_dataset)))]</span>
@@ -385,7 +391,7 @@ Length of test dataset:  51</code></pre>
 <span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">2</span>)</span>
 <span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>plt.axis(<span class="st">"off"</span>)</span>
 <span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>plt.imshow(sample_msk.squeeze(), cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -410,7 +416,7 @@ Length of test dataset:  51</code></pre>
 </div>
 <p>Take a look at more samples from the train set.</p>
 <div id="cell-20" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:24.800770Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:24.800592Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:26.064819Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:26.064143Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:24.800746Z&quot;}}" data-outputid="61eaa474-952e-41db-8bfb-97b4b8ca4a27" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">3</span>):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    sample_img, sample_msk <span class="op">=</span> train_dataset[random.choice(<span class="bu">range</span>(<span class="bu">len</span>(train_dataset)))]</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    plt.subplot(<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">1</span>)</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Image"</span>)</span>
@@ -420,7 +426,7 @@ Length of test dataset:  51</code></pre>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    plt.title(<span class="st">"Mask"</span>)</span>
 <span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>    plt.axis(<span class="st">"off"</span>)</span>
 <span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a>    plt.imshow(sample_msk.squeeze(), cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
-<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb14-11"><a href="#cb14-11" aria-hidden="true" tabindex="-1"></a>    plt.show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -446,7 +452,7 @@ Length of test dataset:  51</code></pre>
 <p>Find the weight of positive and negative pixels.</p>
 <p>The number of positive pixels is less than 1% of the total, showing that the dataset is highly imbalanced.</p>
 <div id="cell-22" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;}}" data-outputid="83922e76-2950-4533-83d4-06658e332d63" data-execution_count="13">
-<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>positive_weight <span class="op">=</span> <span class="dv">0</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>positive_weight <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>negative_weight <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>total_pixels <span class="op">=</span> <span class="dv">0</span></span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>img_shape <span class="op">=</span> train_dataset[<span class="dv">0</span>][<span class="dv">0</span>].shape</span>
@@ -456,7 +462,7 @@ Length of test dataset:  51</code></pre>
 <span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    total_pixels <span class="op">+=</span> (img_shape[<span class="dv">1</span>] <span class="op">*</span> img_shape[<span class="dv">2</span>])</span>
 <span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>positive_weight <span class="op">/=</span> total_pixels</span>
 <span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>negative_weight <span class="op">/=</span> total_pixels</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'positive weight = '</span>,positive_weight, <span class="st">'</span><span class="ch">\t</span><span class="st">negative weight = '</span>, negative_weight)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="st">'positive weight = '</span>,positive_weight, <span class="st">'</span><span class="ch">\t</span><span class="st">negative weight = '</span>, negative_weight)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>positive weight =  0.002119411892361111     negative weight =  0.9978805881076389</code></pre>
 </div>
@@ -467,7 +473,7 @@ Length of test dataset:  51</code></pre>
 <section id="create-model-and-train" class="level2">
 <h2 class="anchored" data-anchor-id="create-model-and-train">Create model and train</h2>
 <div id="cell-24" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:26.066771Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:26.066442Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:26.073989Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:26.073435Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:26.066674Z&quot;}}" data-execution_count="14">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> islice</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> itertools <span class="im">import</span> islice</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> show_predictions_from_batch(model, dataloader, batch_num<span class="op">=</span><span class="dv">0</span>, limit <span class="op">=</span> <span class="va">None</span>):</span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    <span class="co">"""</span></span>
@@ -504,13 +510,13 @@ Length of test dataset:  51</code></pre>
 <span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a>        ax <span class="op">=</span> fig.add_subplot(<span class="dv">1</span>,<span class="dv">3</span>,<span class="dv">3</span>)</span>
 <span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a>        ax.imshow(pr_mask.squeeze(), cmap<span class="op">=</span><span class="st">'gray'</span>)</span>
 <span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>        ax.set_title(<span class="st">"Predicted mask"</span>)</span>
-<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>        ax.axis(<span class="st">"off"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>        ax.axis(<span class="st">"off"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>We’ll create a PyTorch Lightning module to help streamline the training process. In the class initalization, it uses the segmentation models library, via the call to <code>smp.create_model</code>, to build a PyTorch model which operates on one channel images for binary segmentation. Many state of the art models are possible with the segmentation models library. However, we’ll typically use the Unet with resnet34 backbone.</p>
 <p>We use the <code>SoftBCEWithLogitsLoss</code> to train the model, but other losses recommended <a href="https://arxiv.org/pdf/2006.14822.pdf">here</a>, can easily be used as well.</p>
 <p>We’ll also use the segmentation models library to monitor the <em>intersection over union</em> metric. Due to the highly imbalanced nature of this dataset, this will give us a much better indicator of model quality than the accuracy.</p>
 <div id="cell-26" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:22:55.740641Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:22:55.740401Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:22:55.757342Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:22:55.756834Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:22:55.740618Z&quot;}}" data-tags="[]" data-execution_count="15">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SurfaceDefectModel(pl.LightningModule):</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> SurfaceDefectModel(pl.LightningModule):</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, arch, encoder_name, loss <span class="op">=</span> <span class="st">"SoftBCEWithLogitsLoss"</span> , <span class="op">**</span>kwargs):</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>        <span class="bu">super</span>().<span class="fu">__init__</span>()</span>
@@ -655,20 +661,20 @@ Length of test dataset:  51</code></pre>
 <span id="cb18-143"><a href="#cb18-143" aria-hidden="true" tabindex="-1"></a>        <span class="co"># Log hyperparameters to mlflow.</span></span>
 <span id="cb18-144"><a href="#cb18-144" aria-hidden="true" tabindex="-1"></a>        <span class="va">self</span>.logger.log_hyperparams({ <span class="st">"arch"</span>: <span class="va">self</span>.arch, <span class="st">"encoder_name"</span>: <span class="va">self</span>.encoder_name, <span class="st">"loss"</span>: <span class="va">self</span>.loss_name })</span>
 <span id="cb18-145"><a href="#cb18-145" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">hasattr</span>(<span class="va">self</span>.logger, <span class="st">"run_id"</span>):</span>
-<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a>          <span class="va">self</span>.run_id <span class="op">=</span> <span class="va">self</span>.logger.run_id</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-146"><a href="#cb18-146" aria-hidden="true" tabindex="-1"></a>          <span class="va">self</span>.run_id <span class="op">=</span> <span class="va">self</span>.logger.run_id</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Note that we added the extra hook <code>on_fit_end</code> to save hyperparameters to MLflow. More hooks are available at the official documentation <a href="https://pytorch-lightning.readthedocs.io/en/stable/common/lightning_module.html#lightning-hooks">lightning hooks</a>.</p>
 <div id="cell-28" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T12:48:26.091740Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T12:48:26.091451Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T12:48:26.095498Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T12:48:26.094802Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T12:48:26.091718Z&quot;}}" data-scrolled="true" data-tags="[]" data-execution_count="59">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">8</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>batch_size <span class="op">=</span> <span class="dv">8</span></span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>train_loader <span class="op">=</span> DataLoader(train_dataset, batch_size<span class="op">=</span>batch_size, shuffle<span class="op">=</span><span class="va">True</span>, num_workers<span class="op">=</span><span class="dv">2</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>valid_loader <span class="op">=</span> DataLoader(val_dataset, batch_size<span class="op">=</span><span class="dv">1</span>, shuffle<span class="op">=</span><span class="va">False</span>, num_workers<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>valid_loader <span class="op">=</span> DataLoader(val_dataset, batch_size<span class="op">=</span><span class="dv">1</span>, shuffle<span class="op">=</span><span class="va">False</span>, num_workers<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-29" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:23:11.597994Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:23:11.597738Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:23:11.954280Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:23:11.953744Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:23:11.597972Z&quot;}}" data-tags="[]" data-execution_count="58">
-<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SurfaceDefectModel(<span class="st">"Unet"</span>, <span class="st">"resnet34"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> SurfaceDefectModel(<span class="st">"Unet"</span>, <span class="st">"resnet34"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Sanity check the model by showing its predictions.</p>
 <div id="cell-31" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:23:14.011813Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:23:14.011147Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:23:15.771546Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:23:15.770899Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:23:14.011784Z&quot;}}" data-outputid="bd81ffb6-399b-40a0-cb12-8d398e92bc96" data-execution_count="60">
-<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>show_predictions_from_batch(model, train_loader, batch_num<span class="op">=</span><span class="dv">0</span>, limit<span class="op">=</span><span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>show_predictions_from_batch(model, train_loader, batch_num<span class="op">=</span><span class="dv">0</span>, limit<span class="op">=</span><span class="dv">1</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -679,7 +685,7 @@ Length of test dataset:  51</code></pre>
 </div>
 <p>We’ll use the <code>ModelCheckpoint</code> callback from PyTorch lightning to save the best model, as measured by the intersection over union metric.</p>
 <div id="cell-33" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:23:21.712657Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:23:21.712386Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:23:21.717951Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:23:21.717245Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:23:21.712628Z&quot;}}" data-tags="[]" data-execution_count="61">
-<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytorch_lightning.callbacks <span class="im">import</span> ModelCheckpoint</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pytorch_lightning.callbacks <span class="im">import</span> ModelCheckpoint</span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pathlib <span class="im">import</span> Path</span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>checkpoint_callback <span class="op">=</span> ModelCheckpoint(</span>
@@ -691,11 +697,11 @@ Length of test dataset:  51</code></pre>
 <span id="cb22-10"><a href="#cb22-10" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb22-11"><a href="#cb22-11" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb22-12"><a href="#cb22-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Add the model directory if it it doesn't exist</span></span>
-<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>Path(<span class="st">"./models"</span>).mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb22-13"><a href="#cb22-13" aria-hidden="true" tabindex="-1"></a>Path(<span class="st">"./models"</span>).mkdir(exist_ok<span class="op">=</span><span class="va">True</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Now with the help of PyTorch lightning, we can train and log to MLflow, with a few lines of code.</p>
 <div id="cell-35" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:23:31.140686Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:23:31.140081Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:38:23.094491Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:38:23.093759Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:23:31.140658Z&quot;}}" data-tags="[]">
-<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mlf_logger <span class="op">=</span> MLFlowLogger(experiment_name<span class="op">=</span><span class="st">"lightning_logs"</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mlf_logger <span class="op">=</span> MLFlowLogger(experiment_name<span class="op">=</span><span class="st">"lightning_logs"</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>trainer <span class="op">=</span> pl.Trainer(</span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    gpus<span class="op">=</span><span class="dv">1</span>, </span>
 <span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    max_epochs<span class="op">=</span><span class="dv">200</span>,</span>
@@ -710,15 +716,15 @@ Length of test dataset:  51</code></pre>
 <span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>    model, </span>
 <span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>    train_dataloaders<span class="op">=</span>train_loader, </span>
 <span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>    val_dataloaders<span class="op">=</span>valid_loader,</span>
-<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Load the best model to analyze its performance.</p>
 <div id="cell-37" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:42:05.511685Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:42:05.511165Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:42:06.348896Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:42:06.348269Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:42:05.511640Z&quot;}}">
-<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>model.load_from_checkpoint(<span class="ss">f"models/surface_defect_</span><span class="sc">{</span>model<span class="sc">.</span>arch<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>model<span class="sc">.</span>encoder_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>model<span class="sc">.</span>loss_name<span class="sc">}</span><span class="ss">.ckpt"</span>, arch <span class="op">=</span> model.arch, encoder_name<span class="op">=</span> model.encoder_name, loss <span class="op">=</span> model.loss_fn.<span class="va">__class__</span>.<span class="va">__name__</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>model.load_from_checkpoint(<span class="ss">f"models/surface_defect_</span><span class="sc">{</span>model<span class="sc">.</span>arch<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>model<span class="sc">.</span>encoder_name<span class="sc">}</span><span class="ss">_</span><span class="sc">{</span>model<span class="sc">.</span>loss_name<span class="sc">}</span><span class="ss">.ckpt"</span>, arch <span class="op">=</span> model.arch, encoder_name<span class="op">=</span> model.encoder_name, loss <span class="op">=</span> model.loss_fn.<span class="va">__class__</span>.<span class="va">__name__</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-38" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:118,&quot;referenced_widgets&quot;:[&quot;95f196291bf146d0a84d17b7faaea000&quot;,&quot;4bb4ff754d534cefb48c3f3582a91179&quot;,&quot;b7a6742e883b47e3969337181b0a6e70&quot;,&quot;8602616e2c7240bb8c2d8e2f8036d9db&quot;,&quot;f69833942928463289d7df7c61eb4ac4&quot;,&quot;288dd1a06ca944d58faf5147d30afb6d&quot;,&quot;d0815c645b024391ad18cba3ecf3ca74&quot;,&quot;b2c4c64012c543049afdae59b15d5d6d&quot;,&quot;de40e15c4d474678a62b3e08383812c0&quot;,&quot;fe03808fe1ba4d35a3cbfc7e67e63df5&quot;,&quot;2a38389c198a4ea4994fcde83382f16b&quot;]}}" data-outputid="249e0951-f296-44a7-b0ef-8ecd31f041a4" data-execution_count="64">
-<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run validation dataset</span></span>
-<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>trainer.validate(model, dataloaders<span class="op">=</span>valid_loader, verbose<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run validation dataset</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>trainer.validate(model, dataloaders<span class="op">=</span>valid_loader, verbose<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]</code></pre>
 </div>
@@ -735,8 +741,8 @@ Length of test dataset:  51</code></pre>
 </div>
 <p>Visualize the model performance on the validation set.</p>
 <div id="cell-40" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:1000}}" data-outputid="fb2a832b-6b0d-4fd3-cbce-7e57ce25b010" data-execution_count="65">
-<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">min</span>(<span class="bu">len</span>(valid_loader), <span class="dv">5</span>)):</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    show_predictions_from_batch(model, valid_loader, batch_num<span class="op">=</span>i)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="bu">min</span>(<span class="bu">len</span>(valid_loader), <span class="dv">5</span>)):</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>    show_predictions_from_batch(model, valid_loader, batch_num<span class="op">=</span>i)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -777,11 +783,11 @@ Length of test dataset:  51</code></pre>
 <section id="analyze-best-saved-model-on-the-test-set" class="level2">
 <h2 class="anchored" data-anchor-id="analyze-best-saved-model-on-the-test-set">Analyze best saved model on the Test set</h2>
 <div id="cell-42" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:43:32.360310Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:43:32.359333Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:43:32.364049Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:43:32.363608Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:43:32.360276Z&quot;}}" data-scrolled="true" data-tags="[]" data-execution_count="66">
-<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> DataLoader(test_dataset, batch_size<span class="op">=</span><span class="dv">8</span>, shuffle<span class="op">=</span><span class="va">False</span>, num_workers<span class="op">=</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>test_loader <span class="op">=</span> DataLoader(test_dataset, batch_size<span class="op">=</span><span class="dv">8</span>, shuffle<span class="op">=</span><span class="va">False</span>, num_workers<span class="op">=</span><span class="dv">2</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="cell-43" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;execution&quot;,&quot;value&quot;:{&quot;iopub.execute_input&quot;:&quot;2022-06-30T14:43:33.965028Z&quot;,&quot;iopub.status.busy&quot;:&quot;2022-06-30T14:43:33.963960Z&quot;,&quot;iopub.status.idle&quot;:&quot;2022-06-30T14:43:35.775010Z&quot;,&quot;shell.execute_reply&quot;:&quot;2022-06-30T14:43:35.774447Z&quot;,&quot;shell.execute_reply.started&quot;:&quot;2022-06-30T14:43:33.964992Z&quot;}}" data-outputid="f1067000-8093-407d-e524-cb34906e5cdf" data-tags="[]" data-execution_count="67">
-<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run test dataset</span></span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>trainer.test(model, dataloaders<span class="op">=</span>test_loader, verbose<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># run test dataset</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>trainer.test(model, dataloaders<span class="op">=</span>test_loader, verbose<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]</code></pre>
 </div>
@@ -798,7 +804,7 @@ Length of test dataset:  51</code></pre>
 </div>
 <p>Finally, visualize the model performance on the test set.</p>
 <div id="cell-45" class="cell" data-quarto-private-1="{&quot;key&quot;:&quot;colab&quot;,&quot;value&quot;:{&quot;base_uri&quot;:&quot;https://localhost:8080/&quot;,&quot;height&quot;:1000}}" data-outputid="f1c5b575-662e-4e5f-95e5-28542d9f4f59" data-scrolled="false" data-execution_count="69">
-<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>show_predictions_from_batch(model, test_loader, batch_num<span class="op">=</span><span class="dv">0</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>show_predictions_from_batch(model, test_loader, batch_num<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
@@ -857,8 +863,8 @@ Length of test dataset:  51</code></pre>
 </div>
 </div>
 <div id="cell-46" class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
-<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">--</span>iversions <span class="op">-</span>v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">--</span>iversions <span class="op">-</span>v</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>Python implementation: CPython
 Python version       : 3.9.7
@@ -932,13 +938,14 @@ segmentation_models_pytorch: 0.3.0
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

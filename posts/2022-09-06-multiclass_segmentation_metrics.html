@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,10 +11,16 @@
 
 <title>Multiclass Segmentation Metrics – Krishan Rajaratnam’s blog</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -74,10 +80,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d7d234f6c0444e3055897b62edb48b25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -107,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -120,7 +126,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -233,13 +239,13 @@ window.Quarto = {
 <p>In this post we’ll dive deeper into these metrics, explaining the two choices for the <code>mdmc_average</code> parameter, including <em>global</em> and <em>samplewise</em>, as well as giving recommendations for dealing with imbalanced datasets.</p>
 <p>The examples below will look primarily at precision and <span class="math inline">\(F1\)</span> score, but note that these metrics can be replaced by recall, dice score, etc.</p>
 <div id="cfb7068d" class="cell" data-execution_count="2">
-<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install pytorch<span class="op">-</span>lightning</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install pytorch<span class="op">-</span>lightning</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install <span class="op">-</span>U git<span class="op">+</span>https:<span class="op">//</span>github.com<span class="op">/</span>qubvel<span class="op">/</span>segmentation_models.pytorch</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install seaborn</span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install watermark</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="op">!</span>pip install watermark</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <div id="595a4bfe" class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> torch</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> functools</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> segmentation_models_pytorch <span class="im">as</span> smp</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> torchmetrics.functional.classification <span class="im">import</span> precision, f1_score</span>
@@ -251,22 +257,22 @@ window.Quarto = {
 <span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
 <span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> matplotlib.pyplot <span class="im">as</span> plt</span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.colors <span class="im">import</span> ListedColormap</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib.colors <span class="im">import</span> ListedColormap</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>To better understand the metrics, we’ll work with a <span class="math inline">\(4\)</span> class problem with <span class="math inline">\(n = 100\)</span> samples. Classes <span class="math inline">\(0\)</span> and <span class="math inline">\(3\)</span> will have a probability of occurence of <span class="math inline">\(\frac{1}{15}\)</span>, class <span class="math inline">\(1\)</span> will have a probability of <span class="math inline">\(\frac{2}{3}\)</span>, and class <span class="math inline">\(2\)</span> will have a probability of <span class="math inline">\(\frac{1}{5}\)</span>. We can generate data having this distribution using <code>torch.multinomial</code> below.</p>
 <div id="7513e786" class="cell" data-execution_count="35">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> torch.tensor([<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">1</span>], dtype<span class="op">=</span>torch.<span class="bu">float</span>)</span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>weights <span class="op">=</span> torch.tensor([<span class="dv">1</span>, <span class="dv">10</span>, <span class="dv">3</span>, <span class="dv">1</span>], dtype<span class="op">=</span>torch.<span class="bu">float</span>)</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>num_classes <span class="op">=</span> <span class="bu">len</span>(weights)</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>shape <span class="op">=</span> (<span class="dv">100</span>,<span class="dv">1</span>,<span class="dv">256</span>,<span class="dv">256</span>)</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>size <span class="op">=</span> functools.<span class="bu">reduce</span>(<span class="kw">lambda</span> x, y : x<span class="op">*</span> y, shape)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> torch.multinomial(weights, size, replacement<span class="op">=</span><span class="va">True</span>).reshape(shape)</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>output[<span class="dv">70</span>:,:,:,:] <span class="op">=</span> torch.zeros(<span class="dv">30</span>, <span class="op">*</span>shape[<span class="dv">1</span>:])</span>
 <span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>target <span class="op">=</span> torch.multinomial(weights, size, replacement<span class="op">=</span><span class="va">True</span>).reshape(shape)</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>target[<span class="dv">70</span>:,:,:,:] <span class="op">=</span> torch.zeros(<span class="dv">30</span>, <span class="op">*</span>shape[<span class="dv">1</span>:])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>target[<span class="dv">70</span>:,:,:,:] <span class="op">=</span> torch.zeros(<span class="dv">30</span>, <span class="op">*</span>shape[<span class="dv">1</span>:])</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>For example, a subset of the output looks like:</p>
 <div id="4c483999" class="cell" data-outputid="c67b961c-45ac-46f2-ad3a-f2f52b2c20b0" data-execution_count="36">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>output[<span class="dv">0</span>,:,:<span class="dv">10</span>,:<span class="dv">10</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>output[<span class="dv">0</span>,:,:<span class="dv">10</span>,:<span class="dv">10</span>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="36">
 <pre><code>tensor([[[1, 1, 2, 1, 2, 2, 1, 1, 2, 2],
          [1, 1, 1, 1, 1, 3, 1, 1, 1, 1],
@@ -282,14 +288,14 @@ window.Quarto = {
 </div>
 <p>First we can collapse the image dimensions, <span class="math inline">\(H\)</span> and <span class="math inline">\(W\)</span>, and then calculate metrics as for multiclass classification. This is precisely what happens when we choose <code>mdmc_average</code> global.</p>
 <div id="990bda74-82a3-44f0-b725-9112ea26e661" class="cell" data-execution_count="38">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>precision(output, target,num_classes<span class="op">=</span>num_classes,average<span class="op">=</span><span class="st">"macro"</span>,mdmc_average<span class="op">=</span><span class="st">"global"</span>).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>precision(output, target,num_classes<span class="op">=</span>num_classes,average<span class="op">=</span><span class="st">"macro"</span>,mdmc_average<span class="op">=</span><span class="st">"global"</span>).item()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="38">
 <pre><code>0.4517214596271515</code></pre>
 </div>
 </div>
 <p>For comparisons sake, in scikit-learn we have:</p>
 <div id="58bedb70-9266-4f27-bf53-99741f1fad29" class="cell" data-execution_count="39">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>metrics.precision_score(target.reshape((<span class="op">-</span><span class="dv">1</span>)).numpy(),output.reshape((<span class="op">-</span><span class="dv">1</span>)).numpy(), average<span class="op">=</span><span class="st">"macro"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>metrics.precision_score(target.reshape((<span class="op">-</span><span class="dv">1</span>)).numpy(),output.reshape((<span class="op">-</span><span class="dv">1</span>)).numpy(), average<span class="op">=</span><span class="st">"macro"</span>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="39">
 <pre><code>0.4517214441963613</code></pre>
 </div>
@@ -303,23 +309,23 @@ window.Quarto = {
 </ol>
 <p>This is the most natural way to calculate metrics like the Jaccard index (intersection over union) for example. Unfortunately the jaccard index can’t be calculated this way using <code>torchmetrics</code>. However the <span class="math inline">\(F1\)</span>/Dice Score can be calculated using <code>torchmetrics</code>, and it’s equivalent to the Jaccard index<a href="#fn1" class="footnote-ref" id="fnref1" role="doc-noteref"><sup>1</sup></a>:</p>
 <div id="97309288-d336-489e-930b-62adfa09c74f" class="cell" data-execution_count="42">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>f1_score(output, target,num_classes<span class="op">=</span>num_classes,average<span class="op">=</span><span class="st">"macro"</span>,mdmc_average<span class="op">=</span><span class="st">"samplewise"</span>).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>f1_score(output, target,num_classes<span class="op">=</span>num_classes,average<span class="op">=</span><span class="st">"macro"</span>,mdmc_average<span class="op">=</span><span class="st">"samplewise"</span>).item()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="42">
 <pre><code>0.2497853934764862</code></pre>
 </div>
 </div>
 <p>However if we calculate the <span class="math inline">\(F1\)</span> score using the segmentation models library, we get:</p>
 <div id="37a3b901-7b05-4b02-9ad9-a1a39b9ef376" class="cell" data-execution_count="20">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tp, fp, fn, tn <span class="op">=</span> smp.metrics.get_stats(output.<span class="bu">long</span>(), target.<span class="bu">long</span>(), mode<span class="op">=</span><span class="st">'multiclass'</span>, num_classes<span class="op">=</span>num_classes)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>smp.metrics.f1_score(tp, fp, fn, tn, reduction<span class="op">=</span><span class="st">"macro-imagewise"</span>).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>tp, fp, fn, tn <span class="op">=</span> smp.metrics.get_stats(output.<span class="bu">long</span>(), target.<span class="bu">long</span>(), mode<span class="op">=</span><span class="st">'multiclass'</span>, num_classes<span class="op">=</span>num_classes)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>smp.metrics.f1_score(tp, fp, fn, tn, reduction<span class="op">=</span><span class="st">"macro-imagewise"</span>).item()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="20">
 <pre><code>0.47478538751602173</code></pre>
 </div>
 </div>
 <p>This is because our dataset has many images with no targets (recall that we zeroed out several images). Thus the <span class="math inline">\(F1\)</span> score for non-background classes reduces to <span class="math inline">\(\frac{0}{0}\)</span>. <code>smp</code> replaces occurences of <span class="math inline">\(\frac{0}{0}\)</span> by <span class="math inline">\(1\)</span>, while <code>torchmetrics</code> replaces <span class="math inline">\(\frac{0}{0}\)</span> by <span class="math inline">\(0\)</span>. If we pass <code>zero_division=0</code> to the segmentation models library, we get the same value as <code>torchmetrics</code>:</p>
 <div id="19f9150c-9e93-4012-8dc9-258d7efb4572" class="cell" data-execution_count="21">
-<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tp, fp, fn, tn <span class="op">=</span> smp.metrics.get_stats(output.<span class="bu">long</span>(), target.<span class="bu">long</span>(), mode<span class="op">=</span><span class="st">'multiclass'</span>, num_classes<span class="op">=</span>num_classes)</span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>smp.metrics.f1_score(tp, fp, fn, tn, reduction<span class="op">=</span><span class="st">"macro-imagewise"</span>, zero_division<span class="op">=</span><span class="dv">0</span>).item()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>tp, fp, fn, tn <span class="op">=</span> smp.metrics.get_stats(output.<span class="bu">long</span>(), target.<span class="bu">long</span>(), mode<span class="op">=</span><span class="st">'multiclass'</span>, num_classes<span class="op">=</span>num_classes)</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>smp.metrics.f1_score(tp, fp, fn, tn, reduction<span class="op">=</span><span class="st">"macro-imagewise"</span>, zero_division<span class="op">=</span><span class="dv">0</span>).item()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="21">
 <pre><code>0.2497853934764862</code></pre>
 </div>
@@ -327,8 +333,8 @@ window.Quarto = {
 <p>This we why we recommend avoiding <code>mdmc_average</code> equal to samplewise, and calculating the metrics like for regular multiclass classifiers instead.</p>
 <p>In conclusion when dealing with balanaced datasets, accuracy using the micro average plus <code>mdmc_average</code> global is sufficient, while the <span class="math inline">\(F1\)</span> score with the weighted average plus <code>mdmc_average</code> global is more accurate for imbalanaced datasets.</p>
 <div id="9829ff05" class="cell" data-execution_count="4">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">--</span>iversions</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>load_ext watermark</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="op">%</span>watermark <span class="op">--</span>iversions</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>seaborn                    : 0.11.2
 matplotlib                 : 3.5.1
@@ -407,13 +413,14 @@ sklearn                    : 1.0.2
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

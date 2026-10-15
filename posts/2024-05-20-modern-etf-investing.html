@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -11,10 +11,16 @@
 
 <title>Modern ETF Investing – Krishan Rajaratnam’s blog</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -26,7 +32,6 @@ ul.task-list li input[type="checkbox"] {
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -59,10 +64,10 @@ div.csl-indent {
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-d7d234f6c0444e3055897b62edb48b25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -197,18 +202,18 @@ div.csl-indent {
 
 
 
-<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list">
+<div id="quarto-appendix" class="default"><section class="quarto-appendix-contents" role="doc-bibliography" id="quarto-bibliography"><h2 class="anchored quarto-appendix-heading">References</h2><div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-Bortolotti2024" class="csl-entry" role="listitem">
-Bortolotti, Dan. 2024. <span>“Canadian Couch Potato.”</span> 2024. <a href="https://canadiancouchpotato.com/">https://canadiancouchpotato.com/</a>.
+Bortolotti, Dan. 2024. <span>“Canadian Couch Potato.”</span> <a href="https://canadiancouchpotato.com/">https://canadiancouchpotato.com/</a>.
 </div>
 <div id="ref-hallam2017millionaire" class="csl-entry" role="listitem">
-Hallam, Andrew. 2017. <em>Millionaire Teacher: The Nine Rules of Wealth You Should Have Learned in School 2nd Edition</em>. Hoboken, NJ: John Wiley &amp; Sons.
+Hallam, Andrew. 2017. <em>Millionaire Teacher: The Nine Rules of Wealth You Should Have Learned in School 2nd Edition</em>. John Wiley &amp; Sons.
 </div>
 <div id="ref-howtoinvestonline" class="csl-entry" role="listitem">
-Lespérance, Jean. 2024. <span>“How to Invest Online: Guide to Self-Directed Investing.”</span> 2024. <a href="http://howtoinvestonline.blogspot.com/2014/05/howtoinvestonline-guide-to-self.html">http://howtoinvestonline.blogspot.com/2014/05/howtoinvestonline-guide-to-self.html</a>.
+Lespérance, Jean. 2024. <span>“How to Invest Online: Guide to Self-Directed Investing.”</span> <a href="http://howtoinvestonline.blogspot.com/2014/05/howtoinvestonline-guide-to-self.html">http://howtoinvestonline.blogspot.com/2014/05/howtoinvestonline-guide-to-self.html</a>.
 </div>
 <div id="ref-sethi2019will" class="csl-entry" role="listitem">
-Sethi, Ramit. 2019. <em>I Will Teach You to Be Rich 2nd Edition</em>. New York, NY: Workman Publishing.
+Sethi, Ramit. 2019. <em>I Will Teach You to Be Rich 2nd Edition</em>. Workman Publishing.
 </div>
 </div></section></div></main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -262,13 +267,14 @@ Sethi, Ramit. 2019. <em>I Will Teach You to Be Rich 2nd Edition</em>. New York, 
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy

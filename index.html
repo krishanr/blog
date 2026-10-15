@@ -2,17 +2,23 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.7.32">
+<meta name="generator" content="quarto-1.10.19">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Krishan Rajaratnam’s blog</title>
 <style>
-code{white-space: pre-wrap;}
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 span.smallcaps{font-variant: small-caps;}
-div.columns{display: flex; gap: min(4vw, 1.5em);}
-div.column{flex: auto; overflow-x: auto;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
 div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
 ul.task-list{list-style: none;}
 ul.task-list li input[type="checkbox"] {
@@ -39,10 +45,10 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-37eea08aefeeee20ff55810ff984fec1.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-bf27225e3a48a9273f3daa8f8e829971.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-dfb324f25d9b1687192fa8be62ac8f9c.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-d7d234f6c0444e3055897b62edb48b25.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -101,7 +107,7 @@ ul.task-list li input[type="checkbox"] {
   </script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -114,7 +120,7 @@ const typesetMath = (el) => {
     var macros = [];
     for (var i = 0; i < mathElements.length; i++) {
       var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN") {
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
         window.katex.render(texText.data, mathElements[i], {
           displayMode: mathElements[i].classList.contains('display'),
           throwOnError: false,
@@ -177,7 +183,7 @@ window.Quarto = {
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(12)</span></div><div class="category" data-category="YXR0ZW50aW9u">attention <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Q2FuYWRh">Canada <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y2xhc3NpZmljYXRpb24=">classification <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZG9ja2Vy">docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RVRG">ETF <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZmFzdGVtYmVk">fastembed <span class="quarto-category-count">(1)</span></div><div class="category" data-category="aW52ZXN0aW5n">investing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGxt">llm <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWxmbG93">mlflow <span class="quarto-category-count">(1)</span></div><div class="category" data-category="b3BlbmN2">opencv <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0b3JjaA==">pytorch <span class="quarto-category-count">(5)</span></div><div class="category" data-category="cHl0b3JjaGxpZ2h0bmluZw==">pytorchlightning <span class="quarto-category-count">(3)</span></div><div class="category" data-category="cWRyYW50">qdrant <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmFn">rag <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmFueA==">ranx <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmV0aXJlbWVudA==">retirement <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmV0cmlldmFs">retrieval <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2VhcmNo">search <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2VnbWVudGF0aW9ubW9kZWxz">segmentationmodels <span class="quarto-category-count">(3)</span></div><div class="category" data-category="c3RhdGlzdGljcw==">statistics <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dGVuc29yYm9hcmQ=">tensorboard <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dG9vbHM=">tools <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG9yY2htZXRyaWNz">torchmetrics <span class="quarto-category-count">(4)</span></div><div class="category" data-category="dG9yY2h2aXNpb24=">torchvision <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dHJhbnNmb3JtZXI=">transformer <span class="quarto-category-count">(1)</span></div></div></div>
+    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(12)</span></div><div class="category" data-category="YXR0ZW50aW9u">attention <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Q2FuYWRh">Canada <span class="quarto-category-count">(1)</span></div><div class="category" data-category="Y2xhc3NpZmljYXRpb24=">classification <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZG9ja2Vy">docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="RVRG">ETF <span class="quarto-category-count">(1)</span></div><div class="category" data-category="aW52ZXN0aW5n">investing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGFuZ2NoYWlu">langchain <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bGxt">llm <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bWxmbG93">mlflow <span class="quarto-category-count">(1)</span></div><div class="category" data-category="b3BlbmN2">opencv <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHl0b3JjaA==">pytorch <span class="quarto-category-count">(5)</span></div><div class="category" data-category="cHl0b3JjaGxpZ2h0bmluZw==">pytorchlightning <span class="quarto-category-count">(3)</span></div><div class="category" data-category="cmFn">rag <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmV0aXJlbWVudA==">retirement <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cmV0cmlldmFs">retrieval <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2VhcmNo">search <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c2VnbWVudGF0aW9ubW9kZWxz">segmentationmodels <span class="quarto-category-count">(3)</span></div><div class="category" data-category="c3RhdGlzdGljcw==">statistics <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dGVuc29yYm9hcmQ=">tensorboard <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dG9vbHM=">tools <span class="quarto-category-count">(1)</span></div><div class="category" data-category="dG9yY2htZXRyaWNz">torchmetrics <span class="quarto-category-count">(4)</span></div><div class="category" data-category="dG9yY2h2aXNpb24=">torchvision <span class="quarto-category-count">(2)</span></div><div class="category" data-category="dHJhbnNmb3JtZXI=">transformer <span class="quarto-category-count">(1)</span></div></div></div>
 <!-- main -->
 <main class="content column-page-left" id="quarto-document-content"><header id="title-block-header" class="quarto-title-block"></header>
 
@@ -190,47 +196,43 @@ window.Quarto = {
 
 <div class="quarto-listing quarto-listing-container-default" id="listing-listing">
 <div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="cmV0cmlldmFsJTJDZmFzdGVtYmVkJTJDcWRyYW50JTJDcmFueCUyQ3NlYXJjaCUyQ3JhZw==" data-listing-date-sort="1767157200000" data-listing-file-modified-sort="1767377412501" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="20" data-listing-word-count-sort="3891">
-<div class="thumbnail"><a href="./posts/2025-12-31-hybrid-search-qdrant.html" class="no-external">
+<div class="quarto-post image-right" data-index="0" data-categories="cmV0cmlldmFsJTJDbGFuZ2NoYWluJTJDc2VhcmNoJTJDcmFn" data-listing-date-sort="1767157200000" data-listing-file-modified-sort="1792103406250" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="663">
+<div class="thumbnail"><a href="./posts/2026-10-15-semantic-search.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
 
 </a></div>
 <div class="body">
 <h3 class="no-anchor listing-title">
-<a href="./posts/2025-12-31-hybrid-search-qdrant.html" class="no-external">Hybrid search using Qdrant</a>
+<a href="./posts/2026-10-15-semantic-search.html" class="no-external">Simple Retrieval Augmented Generation (RAG) example with LangChain</a>
 </h3>
 <div class="listing-categories">
 
 <div class="listing-category" onclick="window.quartoListingCategory('cmV0cmlldmFs'); return false;">retrieval</div>
 
-<div class="listing-category" onclick="window.quartoListingCategory('ZmFzdGVtYmVk'); return false;">fastembed</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cWRyYW50'); return false;">qdrant</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cmFueA=='); return false;">ranx</div>
+<div class="listing-category" onclick="window.quartoListingCategory('bGFuZ2NoYWlu'); return false;">langchain</div>
 
 <div class="listing-category" onclick="window.quartoListingCategory('c2VhcmNo'); return false;">search</div>
 
 <div class="listing-category" onclick="window.quartoListingCategory('cmFn'); return false;">rag</div>
 
 </div>
-<div class="delink listing-description"><a href="./posts/2025-12-31-hybrid-search-qdrant.html" class="no-external">
-</a><p><a href="./posts/2025-12-31-hybrid-search-qdrant.html" class="no-external">Following Fastembed’s article on hybrid search available </a><a href="https://qdrant.github.io/fastembed/examples/Hybrid_Search/">here</a> we compare dense, sparse and hybrid retrieval on the HotPotQA dataset. The comparison is done by using the ranx library for evaluation.</p>
-</div>
+<div class="delink listing-description"><a href="./posts/2026-10-15-semantic-search.html" class="no-external">
+<p>This is a minimal Retrieval Augmented Generation (RAG) example using LangChain.</p>
+</a></div>
 </div>
 <div class="metadata">
-<a href="./posts/2025-12-31-hybrid-search-qdrant.html" class="no-external">
+<a href="./posts/2026-10-15-semantic-search.html" class="no-external">
 <div class="listing-date">
 Dec 31, 2025
 </div>
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="1" data-categories="bGxtJTJDdHJhbnNmb3JtZXIlMkNhdHRlbnRpb24=" data-listing-date-sort="1754798400000" data-listing-file-modified-sort="1756180549655" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1541">
+<div class="quarto-post image-right" data-index="1" data-categories="bGxtJTJDdHJhbnNmb3JtZXIlMkNhdHRlbnRpb24=" data-listing-date-sort="1754798400000" data-listing-file-modified-sort="1792098014323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="8" data-listing-word-count-sort="1541">
 <div class="thumbnail"><a href="./posts/2025-08-10-transformer-architecture.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\image-11.png" alt="alt text"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/image-11.png" alt="alt text"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -258,10 +260,10 @@ Aug 10, 2025
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="2" data-categories="aW52ZXN0aW5nJTJDRVRGJTJDQ2FuYWRhJTJDcmV0aXJlbWVudA==" data-listing-date-sort="1716177600000" data-listing-file-modified-sort="1752772115820" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="590">
+<div class="quarto-post image-right" data-index="2" data-categories="aW52ZXN0aW5nJTJDRVRGJTJDQ2FuYWRhJTJDcmV0aXJlbWVudA==" data-listing-date-sort="1716177600000" data-listing-file-modified-sort="1792098014323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="590">
 <div class="thumbnail"><a href="./posts/2024-05-20-modern-etf-investing.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\sandp500returns.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/sandp500returns.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -291,10 +293,10 @@ May 20, 2024
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="3" data-categories="b3BlbmN2JTJDcHl0aG9u" data-listing-date-sort="1663560000000" data-listing-file-modified-sort="1752772115819" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="342">
+<div class="quarto-post image-right" data-index="3" data-categories="b3BlbmN2JTJDcHl0aG9u" data-listing-date-sort="1663560000000" data-listing-file-modified-sort="1792098014323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="342">
 <div class="thumbnail"><a href="./posts/2022-09-19-opencv-contours.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-09-19-opencv-contours_files\figure-html\cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-09-19-opencv-contours_files/figure-html/cell-4-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -320,7 +322,7 @@ Sep 19, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="4" data-categories="cHl0b3JjaCUyQ3NlZ21lbnRhdGlvbm1vZGVscyUyQ3RvcmNobWV0cmljcw==" data-listing-date-sort="1662436800000" data-listing-file-modified-sort="1752772115817" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="445">
+<div class="quarto-post image-right" data-index="4" data-categories="cHl0b3JjaCUyQ3NlZ21lbnRhdGlvbm1vZGVscyUyQ3RvcmNobWV0cmljcw==" data-listing-date-sort="1662436800000" data-listing-file-modified-sort="1792098014323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="445">
 <div class="thumbnail"><a href="./posts/2022-09-06-multiclass_segmentation_metrics.html" class="no-external">
 
 <div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
@@ -351,10 +353,10 @@ Sep 6, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="5" data-categories="cHl0b3JjaCUyQ3B5dG9yY2hsaWdodG5pbmclMkNzZWdtZW50YXRpb25tb2RlbHMlMkN0b3JjaG1ldHJpY3MlMkN0b3JjaHZpc2lvbiUyQ3RlbnNvcmJvYXJk" data-listing-date-sort="1661400000000" data-listing-file-modified-sort="1752772115814" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="513">
+<div class="quarto-post image-right" data-index="5" data-categories="cHl0b3JjaCUyQ3B5dG9yY2hsaWdodG5pbmclMkNzZWdtZW50YXRpb25tb2RlbHMlMkN0b3JjaG1ldHJpY3MlMkN0b3JjaHZpc2lvbiUyQ3RlbnNvcmJvYXJk" data-listing-date-sort="1661400000000" data-listing-file-modified-sort="1792098014323" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="513">
 <div class="thumbnail"><a href="./posts/2022-08-25-pet_segmentation.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-08-25-pet_segmentation_files\figure-html\cell-6-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-08-25-pet_segmentation_files/figure-html/cell-6-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -388,10 +390,10 @@ Aug 25, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="6" data-categories="cHl0b3JjaCUyQ3RvcmNobWV0cmljcyUyQ2NsYXNzaWZpY2F0aW9u" data-listing-date-sort="1660795200000" data-listing-file-modified-sort="1752772115780" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="539">
+<div class="quarto-post image-right" data-index="6" data-categories="cHl0b3JjaCUyQ3RvcmNobWV0cmljcyUyQ2NsYXNzaWZpY2F0aW9u" data-listing-date-sort="1660795200000" data-listing-file-modified-sort="1792098014307" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="539">
 <div class="thumbnail"><a href="./posts/2022-08-18-multiclass_classification_metrics.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-08-18-multiclass_classification_metrics_files\figure-html\cell-9-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-08-18-multiclass_classification_metrics_files/figure-html/cell-9-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -419,10 +421,10 @@ Aug 18, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="7" data-categories="cHl0b3JjaCUyQ3B5dG9yY2hsaWdodG5pbmclMkN0b3JjaG1ldHJpY3MlMkN0b3JjaHZpc2lvbiUyQ3RlbnNvcmJvYXJk" data-listing-date-sort="1660708800000" data-listing-file-modified-sort="1752774808506" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="513">
+<div class="quarto-post image-right" data-index="7" data-categories="cHl0b3JjaCUyQ3B5dG9yY2hsaWdodG5pbmclMkN0b3JjaG1ldHJpY3MlMkN0b3JjaHZpc2lvbiUyQ3RlbnNvcmJvYXJk" data-listing-date-sort="1660708800000" data-listing-file-modified-sort="1792098014307" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="513">
 <div class="thumbnail"><a href="./posts/2022-08-17-pet_breed_classification.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-08-17-pet_breed_classification_files\figure-html\cell-5-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-08-17-pet_breed_classification_files/figure-html/cell-5-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -454,10 +456,10 @@ Aug 17, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="8" data-categories="cHl0b3JjaCUyQ3NlZ21lbnRhdGlvbm1vZGVscyUyQ3B5dG9yY2hsaWdodG5pbmclMkNtbGZsb3c=" data-listing-date-sort="1656561600000" data-listing-file-modified-sort="1752772115695" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="502">
+<div class="quarto-post image-right" data-index="8" data-categories="cHl0b3JjaCUyQ3NlZ21lbnRhdGlvbm1vZGVscyUyQ3B5dG9yY2hsaWdodG5pbmclMkNtbGZsb3c=" data-listing-date-sort="1656561600000" data-listing-file-modified-sort="1792098014239" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="502">
 <div class="thumbnail"><a href="./posts/2022-06-30-surface-defect-segmentation.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-06-30-surface-defect-segmentation_files\figure-html\cell-12-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-06-30-surface-defect-segmentation_files/figure-html/cell-12-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -487,10 +489,10 @@ Jun 30, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="9" data-categories="ZG9ja2VyJTJDdG9vbHM=" data-listing-date-sort="1655265600000" data-listing-file-modified-sort="1752772115686" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="595">
+<div class="quarto-post image-right" data-index="9" data-categories="ZG9ja2VyJTJDdG9vbHM=" data-listing-date-sort="1655265600000" data-listing-file-modified-sort="1792098014234" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="595">
 <div class="thumbnail"><a href="./posts/2022-06-15-anaconda-in-docker-on-paperspace.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\paperspace1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/paperspace1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -516,10 +518,10 @@ Jun 15, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="10" data-categories="c3RhdGlzdGljcw==" data-listing-date-sort="1648612800000" data-listing-file-modified-sort="1752772115684" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2710">
+<div class="quarto-post image-right" data-index="10" data-categories="c3RhdGlzdGljcw==" data-listing-date-sort="1648612800000" data-listing-file-modified-sort="1792098014234" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="14" data-listing-word-count-sort="2710">
 <div class="thumbnail"><a href="./posts/2022-03-30-principal-component-analysis.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-03-30-principal-component-analysis_files\figure-html\cell-13-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-03-30-principal-component-analysis_files/figure-html/cell-13-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -543,10 +545,10 @@ Mar 30, 2022
 </a>
 </div>
 </div>
-<div class="quarto-post image-right" data-index="11" data-categories="c3RhdGlzdGljcw==" data-listing-date-sort="1642050000000" data-listing-file-modified-sort="1752775457509" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1846">
+<div class="quarto-post image-right" data-index="11" data-categories="c3RhdGlzdGljcw==" data-listing-date-sort="1642050000000" data-listing-file-modified-sort="1792098014231" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="10" data-listing-word-count-sort="1846">
 <div class="thumbnail"><a href="./posts/2022-01-13-standard-probability-distributions.html" class="no-external">
 
-<p class="card-img-top"><img src="posts\2022-01-13-standard-probability-distributions_files\figure-html\cell-5-output-1.png"  class="thumbnail-image card-img"/></p>
+<p class="card-img-top"><img loading='lazy' src="posts/2022-01-13-standard-probability-distributions_files/figure-html/cell-5-output-1.png"  class="thumbnail-image card-img"/></p>
 
 </a></div>
 <div class="body">
@@ -624,13 +626,14 @@ Jan 13, 2022
       e.clearSelection();
     }
     const getTextToCopy = function(trigger) {
-        const codeEl = trigger.previousElementSibling.cloneNode(true);
-        for (const childEl of codeEl.children) {
-          if (isCodeAnnotation(childEl)) {
-            childEl.remove();
-          }
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
         }
-        return codeEl.innerText;
+      }
+      return codeEl.innerText;
     }
     const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
       text: getTextToCopy
