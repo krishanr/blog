@@ -1,0 +1,235 @@
+---
+title: "Simple Retrieval Augmented Generation (RAG) example with LangChain"
+date: '2025-12-31'
+description: This is a minimal Retrieval Augmented Generation (RAG) example using LangChain. 
+format:
+  html:
+    code-fold: false
+jupyter: python3
+badges: false
+categories:
+- retrieval
+- langchain
+- search
+- rag
+---
+
+
+## Setup
+
+First let's load the appropriate libraries and setup a class for dense, sparse and hybrid retrieval.
+
+```{python}
+
+import json
+import logging
+from contextlib import contextmanager
+from typing import Dict, List, Optional, Tuple
+from dotenv import load_dotenv
+
+# Load environment variables from .env
+load_dotenv()
+
+```
+
+## Create Documents
+
+```{python}
+from langchain_core.documents import Document
+
+documents = [
+    Document(page_content="Dogs are great companions, known for their loyalty and friendliness.",
+            metadata={"source": "mammal-pets-doc"}),
+    Document(
+        page_content="Cats are independent pets that often enjoy their own space.",
+        metadata={"source": "mammal-pets-doc"}
+    ),
+]
+
+from langchain_openai import OpenAIEmbeddings
+
+embeddings = OpenAIEmbeddings(model="text-embedding-3-large")
+
+vector_1 = embeddings.embed_query(documents[0].page_content)
+vector_2 = embeddings.embed_query(documents[1].page_content)
+
+assert len(vector_1) == len(vector_2)
+print(f"Generated vectors of length {len(vector_1)}\n")
+print(vector_1[:10])
+```
+
+## Select a vector store
+
+Work with the Nike 10K form found [here](https://github.com/langchain-ai/langchain/blob/v0.3/docs/docs/example_data/nke-10k-2023.pdf).
+
+```{python}
+from langchain_core.vectorstores import InMemoryVectorStore
+import pypdf
+from langchain_core.documents import Document
+
+vector_store = InMemoryVectorStore(embeddings)
+
+
+# Below is a minimal helper for demonstration purposes.
+def load_pdf_pages(file_path: str) -> list[Document]:
+    reader = pypdf.PdfReader(file_path)
+    return [
+        Document(
+            page_content = page.extract_text() or "",
+            metadata = {"source": file_path, "page": i},
+        )
+        for i, page in enumerate(reader.pages)
+    ]
+
+file_path = "nke-10k-2023.pdf"
+docs = load_pdf_pages(file_path)
+print(len(docs))
+```
+
+```{python}
+print(docs[3])
+```
+
+```{python}
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
+text_splitter = RecursiveCharacterTextSplitter(
+  chunk_size=1000, chunk_overlap=100, add_start_index=True
+)
+
+all_splits = text_splitter.split_documents(docs)
+
+print(len(all_splits))
+ids = vector_store.add_documents(documents=all_splits)
+```
+
+## Query the vector store
+
+### Search by string:
+
+```{python}
+results = vector_store.similarity_search(
+  "How many distribution centers does Nike have in the US?"
+)
+
+print(results[0])
+```
+
+### Async query:
+
+```{python}
+results = await vector_store.asimilarity_search("When was Nike Incorporated?")
+
+print(results[0])
+```
+
+## Return scores
+
+```{python}
+results = vector_store.similarity_search_with_score("What was Nike's revenue in 2023?")
+
+doc, score = results[0]
+print(f"Score: {score}\n")
+print(doc)
+```
+
+## Search by vector
+
+```{python}
+embedding = embeddings.embed_query("How were Nike's margins impacted in 2023?")
+
+results = vector_store.similarity_search_by_vector(embedding)
+print(results[0])
+```
+
+## Use retrievers
+
+```{python}
+from typing import List
+
+from langchain_core.documents import Document
+from langchain_core.runnables import chain
+
+@chain
+def retriever(query: str) -> List[Document]:
+    return vector_store.similarity_search(query, k=1)
+
+retriever.batch(
+    [
+        "How many distribution centers does Nike have in the US?",
+        "When was Nike incorporated?",
+    ]
+)
+```
+
+```{python}
+retriever = vector_store.as_retriever(
+    search_type="similarity",
+    search_kwargs={"k": 1},
+)
+
+retriever.batch(
+    [
+        "How many distribution centers does Nike have in the US?",
+        "When was Nike incorporated?",
+    ]
+)
+```
+
+```{python}
+# Also try "mmr" (maximum marginal relevance) and "similarity_score_threshold", where
+# the later option filters documents by similarity score.
+retriever = vector_store.as_retriever(
+    search_type="mmr",
+    search_kwargs={"k": 1},
+)
+
+retriever.batch(
+    [
+        "How many distribution centers does Nike have in the US?",
+        "When was Nike incorporated?",
+    ]
+)
+```
+
+## RAG example
+
+
+```{python}
+from langchain_openrouter import ChatOpenRouter
+
+llm = ChatOpenRouter(model="qwen/qwen3.8-2.4t-a95b",
+                    temperature=0.1)
+```
+
+```{python}
+def rag_bot(question: str) -> dict:
+    docs = retriever.invoke(question)
+    docs_string = "".join(doc.page_content for doc in docs)
+    instructions = f"""You are helpful assistant who is good at analyzing source information and answering questions.
+         Use the following source documents to answer the user's questions.
+         If you don't know the answer, just say that you don't know.
+         Use three sentences maximum and keep the answer concise.
+
+<context>
+{docs_string}
+</context>"""
+
+    # langchain ChatModel will be automatically traced
+    ai_msg = llm.invoke([
+        {"role" : "system", "content": instructions},
+        {"role": "user", "content": question},
+    ])
+
+    return {"answer": ai_msg.content, "documents": doc}
+```
+
+
+```{python}
+rag_bot("How many distribution centers does Nike have in the US?")
+```
+
+## Conclusion
+
+More details on the retrieval steps can be found [here](https://docs.langchain.com/oss/python/langchain/knowledge-base). 
+We also added a simple RAG bot.
