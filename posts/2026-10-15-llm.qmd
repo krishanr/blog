@@ -1,0 +1,135 @@
+---
+title: "Simple comparison of popular LLMs"
+date: '2026-10-15'
+description: We compare Qwen3.8 Max, Qwen2.5 72B Instruct, OpenAI's GPT3.5 Turbo, OpenAI's GPT 5.5, and Anthropic's Claude Sonnet 5.5 using LangChain for the Python API and OpenRouter to route between the different providers. The task is simple, write an email to Andrew Ng asking him to review my blog.
+format:
+  html:
+    code-fold: false
+jupyter: python3
+badges: false
+categories:
+- llm
+- langchain
+- email
+toc: true
+---
+
+
+## Setup
+
+```{python}
+
+from dotenv import load_dotenv
+
+from langchain_openrouter import ChatOpenRouter
+
+# Load environment variables from .env
+load_dotenv()
+
+```
+
+In the following table we'll summarize the model capabilities using GPT-3.5 Turbo 16k as a baseline. 
+We use GPT-3.5 Turbo 16k as a baseline since it builds on GPT-3 which had a more transparent architecture, training dataset
+and training mechanism.
+
+| Feature | GPT-3.5 Turbo 16k | GPT-5.5 | Claude Sonnet 5.5 | Qwen 3.8 Max (0902) |
+|---|---|---|---|---|
+| **Input modalities** | Text | Text, images | Text, images | Text, images, video |
+| **Output modality** | Text | Text | Text | Text |
+| **Context window** | 16K tokens | 1.05M tokens | 1M tokens | 1M tokens |
+| **Max output tokens** | 4K | 128K | 128K | 131K |
+| **API input price** (per 1M tokens) | $3 | $5 | $2 | $2 |
+| **API output price** (per 1M tokens) | $4 | $30 | $10 | $6 |
+| **Knowledge cutoff** | September 2021 | December 2025 | June 2026 | Unknown |
+| **Reasoning features** | Not specified | Five settings: none to xhigh; medium default | Adaptive thinking; high effort default | Three reasoning levels; `preserve_thinking` default |
+| **Parameters** | 154–175 billion | Not specified | Not specified | 2.4 trillion (MoE) |
+| **Pretraining data** | 400+ billion tokens | Not specified | Not specified | 36 trillion tokens |
+| **Weights/license** | Proprietary | Proprietary | Proprietary | Proprietary |
+
+## Email writing
+
+### Qwen 3.8 Max
+```{python}
+%%timeit -n 1 -r 3
+
+llm = ChatOpenRouter(model="qwen/qwen3.8-2.4t-a95b")
+
+ai_msg = llm.invoke([
+    {"role" : "system", "content": "You are an expert email writer."},
+    {"role": "user", "content": "Write an email to Andrew Ng asking him to review my blog on machine learning and AI."},
+])
+
+print(ai_msg.content)
+```
+
+### Qwen 2.5 72B-Instruct
+
+```{python}
+%%timeit -n 1 -r 3
+
+llm = ChatOpenRouter(model="qwen/qwen-2.5-72b-instruct")
+
+ai_msg = llm.invoke([
+    {"role" : "system", "content": "You are an expert email writer."},
+    {"role": "user", "content": "Write an email to Andrew Ng asking him to review my blog on machine learning and AI."},
+])
+
+print(ai_msg.content)
+```
+
+### GPT-3.5-Turbo
+
+```{python}
+%%timeit -n 1 -r 3
+
+llm = ChatOpenRouter(model="openai/gpt-3.5-turbo-16k")
+
+ai_msg = llm.invoke([
+    {"role" : "system", "content": "You are an expert email writer."},
+    {"role": "user", "content": "Write an email to Andrew Ng asking him to review my blog on machine learning and AI."},
+])
+
+print(ai_msg.content)
+```
+
+### GPT-5.5
+
+```{python}
+%%timeit -n 1 -r 3
+
+llm = ChatOpenRouter(model="openai/gpt-5.5")
+
+ai_msg = llm.invoke([
+    {"role" : "system", "content": "You are an expert email writer."},
+    {"role": "user", "content": "Write an email to Andrew Ng asking him to review my blog on machine learning and AI."},
+])
+
+print(ai_msg.content)
+```
+
+### Claude Sonnet 5.5
+
+```{python}
+%%timeit -n 1 -r 3
+
+llm = ChatOpenRouter(model="anthropic/claude-sonnet-5.5")
+
+ai_msg = llm.invoke([
+    {"role" : "system", "content": "You are an expert email writer."},
+    {"role": "user", "content": "Write an email to Andrew Ng asking him to review my blog on machine learning and AI."},
+])
+
+print(ai_msg.content)
+```
+
+## Conclusion
+
+In conclusion, GPT5.5 had the simplest and most consistent email, while Claude Sonnet 5.5 had the most verbose email.
+In terms of cost and latency, using GPT3.5-turbo as a baseline, Qwen 3.8 Max had a similar run time while 50% more expensive, Qwen 2.5 72B Instruct took 3 times as long
+whie being 10 times cheaper, GPT5.5 took 60% longer while 7 times more expensive and Anthropic's Claude Sonnet 5.5 took 3.5 times longer while being 2.5
+times as expensive. All pricing information is available on OpenRouter, for example, here is the link for [GPT5.5](https://openrouter.ai/openai/gpt-5.5).
+
+A clear prompt will yield more consistent emails. 
+
+Also try increasing the temperature to $1$ to increase the creativity in the email writing. Additional STOTA LLMs to try include meta/muse-wonder, x-ai/grok-4.5 and google/gemini-3.8-flash.
+
